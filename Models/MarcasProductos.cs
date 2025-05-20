@@ -7,7 +7,7 @@ namespace Api_comerce.Models
     public class MarcaProductos
     {
         [Key]
-        public int MARCA_ID { get; set; }
+        public int Id { get; set; }
 
         [StringLength(100)]
         public string? MARCA { get; set; }

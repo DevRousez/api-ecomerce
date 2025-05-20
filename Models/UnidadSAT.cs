@@ -8,7 +8,7 @@ namespace Api_comerce.Models
     {
               
             [Key]
-            public int UNIDAD_ID { get; set; }
+            public int Id { get; set; }
 
             [StringLength(10)]
             public string? CLAVE_UNIDAD { get; set; }

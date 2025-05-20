@@ -7,7 +7,7 @@ namespace Api_comerce.Models
     public class Lineas
     {
         [Key]
-        public int LINEA_ID { get; set; }
+        public int Id { get; set; }
 
         [StringLength(100)]
         public string? LINEA { get; set; }

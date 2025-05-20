@@ -7,7 +7,7 @@ namespace Api_comerce.Models
     public class Empaques
     {
         [Key]
-        public int EMPAQUE_ID { get; set; }
+        public int Id { get; set; }
 
         [StringLength(50)]
         public string? EMPAQUE { get; set; }

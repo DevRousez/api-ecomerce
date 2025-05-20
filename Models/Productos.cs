@@ -7,10 +7,9 @@ namespace Api_comerce.Models
     public class Productos
     {
         [Key]
-        [Column("PRODUCTO_ID")]
-        public int ProductoId { get; set; }
+        public int Id { get; set; }
 
-        [Column("PRODUCTO_SAT_ID")]
+       
         public int? ProductoSatId { get; set; }
 
         [Column("PREFIJO")]

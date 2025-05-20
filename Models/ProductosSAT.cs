@@ -7,8 +7,7 @@ namespace Api_comerce.Models
     public class ProductoSat
     {
         [Key]
-        [Column("PRODUCTO_SAT_ID")]
-        public int ProductoSatId { get; set; }
+        public int Id { get; set; }
 
         [Column("CLAVE_PROD")]
         [StringLength(200)]

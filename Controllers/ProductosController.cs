@@ -33,7 +33,7 @@ namespace Api_comerce.Controllers
                 .Include(p => p.ProductoSat)
                 .Include(p => p.MarcaProducto)
                 .Include(p => p.Linea)
-                .FirstOrDefaultAsync(p => p.ProductoId == id);
+                .FirstOrDefaultAsync(p => p.Id == id);
 
             if (producto == null)
             {

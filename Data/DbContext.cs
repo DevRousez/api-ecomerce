@@ -15,6 +15,24 @@ namespace Api_comerce.Data
         public DbSet<ProductoSat> ProductoSat { get; set; }
         public DbSet<Lineas> Lineas { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Productos>()
+                .HasOne(p => p.ProductoSat)
+                .WithMany() 
+                .HasForeignKey(p => p.ProductoSatId);
 
-    }
+            modelBuilder.Entity<Productos>()
+                .HasOne(p => p.Linea)
+                .WithMany()
+                .HasForeignKey(p => p.LineaId);
+
+            modelBuilder.Entity<Productos>()
+                .HasOne(p => p.MarcaProducto)
+                .WithMany()
+                .HasForeignKey(p => p.MarcaId);
+        }
+
+
+     }
 }

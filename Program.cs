@@ -1,10 +1,11 @@
 using Api_comerce.Data;
 using Microsoft.EntityFrameworkCore;
- 
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Cadena de conexión desde appsettings.json
+// Cadena de conexiï¿½n desde appsettings.json
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 // Registrar DbContext con SQL Server
