@@ -7,6 +7,8 @@ namespace Api_comerce.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
+        public DbSet<AccountsTypes> AccountsTypes { get; set; }
+        public DbSet<Accounts> Accounts { get; set; }
         public DbSet<Productos> Productos { get; set; }
         public DbSet<ProductosEmpaque> ProductosEmpaque { get; set; }
         public DbSet<Empaques> Empaque { get; set; }

@@ -1,6 +1,7 @@
 using Api_comerce.Data;
 using Microsoft.EntityFrameworkCore;
-
+using Api_comerce.Services.Authentication;
+using Microsoft.EntityFrameworkCore;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,17 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // Add services to the container.
 builder.Services.AddControllers();
+builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy",
+        builder => builder
+            .AllowAnyOrigin() // Permitir solicitudes desde cualquier origen
+            .AllowAnyMethod() // Permitir cualquier método HTTP
+            .AllowAnyHeader() // Permitir cualquier encabezado HTTP
+    );
+});
 
 // Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
@@ -29,6 +41,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("CorsPolicy");
 
 app.UseAuthorization();
 
