@@ -19,6 +19,19 @@ namespace Api_comerce.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<AccountsTypes>(entity =>
+            {
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
+                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            });
+
+            modelBuilder.Entity<AccountsTypes>().HasData(
+                new AccountsTypes { Id = 1, AccountType = "Manager",  IsActive = true },
+                new AccountsTypes { Id = 2, AccountType = "Asesor",  IsActive = true },
+                new AccountsTypes { Id = 3, AccountType = "Cliente",  IsActive = true }
+               
+                );
+                
             modelBuilder.Entity<Productos>()
                 .HasOne(p => p.ProductoSat)
                 .WithMany() 

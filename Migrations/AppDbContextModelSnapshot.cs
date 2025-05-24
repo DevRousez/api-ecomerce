@@ -80,17 +80,47 @@ namespace Api_comerce.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.HasKey("Id");
 
                     b.ToTable("AccountsTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AccountType = "Manager",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = true,
+                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AccountType = "Asesor",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = true,
+                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AccountType = "Cliente",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = true,
+                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
                 });
 
             modelBuilder.Entity("Api_comerce.Models.Empaques", b =>
@@ -101,31 +131,31 @@ namespace Api_comerce.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("CODIGO_EMPAQUE")
+                    b.Property<string>("CodigoEmpaque")
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
-                    b.Property<double?>("CONTENIDO")
+                    b.Property<double?>("Contenido")
                         .HasColumnType("float");
 
-                    b.Property<string>("EMPAQUE")
+                    b.Property<string>("Empaque")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<DateTime?>("FECHA_CREADO")
+                    b.Property<DateTime?>("FechaCreado")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool?>("SINCRONIZADO")
+                    b.Property<bool?>("Sincronizado")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("UNIDAD_ID")
+                    b.Property<int?>("UnidadId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UNIDAD_ID");
+                    b.HasIndex("UnidadId");
 
-                    b.ToTable("EMPAQUES");
+                    b.ToTable("Empaques");
                 });
 
             modelBuilder.Entity("Api_comerce.Models.Lineas", b =>
@@ -136,16 +166,19 @@ namespace Api_comerce.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("FECHA_CREADO")
+                    b.Property<DateTime?>("FechaCreado")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("LINEA")
+                    b.Property<string>("Linea")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("Slug")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
-                    b.ToTable("LINEAS");
+                    b.ToTable("Lineas");
                 });
 
             modelBuilder.Entity("Api_comerce.Models.MarcaProductos", b =>
@@ -156,16 +189,19 @@ namespace Api_comerce.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("FECHA_CREADO")
+                    b.Property<DateTime?>("FechaCreado")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("MARCA")
+                    b.Property<string>("Marca")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("Slug")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
-                    b.ToTable("MARCAS_PRODUCTO");
+                    b.ToTable("MarcasProducto");
                 });
 
             modelBuilder.Entity("Api_comerce.Models.ProductoSat", b =>
@@ -178,20 +214,17 @@ namespace Api_comerce.Migrations
 
                     b.Property<string>("ClaveProd")
                         .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)")
-                        .HasColumnName("CLAVE_PROD");
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("Descripcion")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("DESCRIPCION");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("FechaCreado")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("FECHA_CREADO");
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.ToTable("PRODUCTOS_SAT");
+                    b.ToTable("ProductosSat");
                 });
 
             modelBuilder.Entity("Api_comerce.Models.Productos", b =>
@@ -203,33 +236,41 @@ namespace Api_comerce.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<bool?>("Acumulador")
-                        .HasColumnType("bit")
-                        .HasColumnName("ACUMULADOR");
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Descripcion")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("DescripcionBreve")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
                     b.Property<int?>("LineaId")
-                        .HasColumnType("int")
-                        .HasColumnName("LINEA_ID");
+                        .HasColumnType("int");
 
                     b.Property<int?>("MarcaId")
-                        .HasColumnType("int")
-                        .HasColumnName("MARCA_ID");
+                        .HasColumnType("int");
 
                     b.Property<string>("NombreProducto")
                         .HasMaxLength(80)
-                        .HasColumnType("nvarchar(80)")
-                        .HasColumnName("PRODUCTO");
+                        .HasColumnType("nvarchar(80)");
 
                     b.Property<string>("Prefijo")
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasColumnName("PREFIJO");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int?>("ProductoIdAcumulador")
-                        .HasColumnType("int")
-                        .HasColumnName("PRODUCTO_ID_ACUMULADOR");
+                        .HasColumnType("int");
 
                     b.Property<int?>("ProductoSatId")
                         .HasColumnType("int");
+
+                    b.Property<int?>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Slug")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -239,45 +280,38 @@ namespace Api_comerce.Migrations
 
                     b.HasIndex("ProductoSatId");
 
-                    b.ToTable("PRODUCTOS");
+                    b.ToTable("Productos");
                 });
 
             modelBuilder.Entity("Api_comerce.Models.ProductosEmpaque", b =>
                 {
                     b.Property<int>("ProductoId")
-                        .HasColumnType("int")
-                        .HasColumnName("PRODUCTO_ID");
+                        .HasColumnType("int");
 
                     b.Property<int>("EmpaqueId")
-                        .HasColumnType("int")
-                        .HasColumnName("EMPAQUE_ID");
+                        .HasColumnType("int");
 
                     b.Property<bool?>("Activo")
-                        .HasColumnType("bit")
-                        .HasColumnName("ACTIVO");
+                        .HasColumnType("bit");
 
                     b.Property<string>("Codigo")
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)")
-                        .HasColumnName("CODIGO");
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<double?>("Descuento")
-                        .HasColumnType("float")
-                        .HasColumnName("DESCUENTO");
+                        .HasColumnType("float");
 
                     b.Property<decimal?>("PCompra")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("PCOMPRA");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal?>("PVenta")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("PVENTA");
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("ProductoId", "EmpaqueId");
 
                     b.HasIndex("EmpaqueId");
 
-                    b.ToTable("PRODUCTO_EMPAQUE");
+                    b.ToTable("ProductoEmpaque");
                 });
 
             modelBuilder.Entity("Api_comerce.Models.UnidadSAT", b =>
@@ -288,20 +322,20 @@ namespace Api_comerce.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("CLAVE_UNIDAD")
+                    b.Property<string>("ClaveUnidad")
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
-                    b.Property<DateTime?>("FECHA_CREADO")
+                    b.Property<DateTime?>("FechaCreado")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UNIDAD_SAT")
+                    b.Property<string>("UnidadSat")
                         .HasMaxLength(80)
                         .HasColumnType("nvarchar(80)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("UNIDADES_SAT");
+                    b.ToTable("UnidadesSat");
                 });
 
             modelBuilder.Entity("Api_comerce.Models.Accounts", b =>
@@ -319,7 +353,7 @@ namespace Api_comerce.Migrations
                 {
                     b.HasOne("Api_comerce.Models.UnidadSAT", "UnidadSAT")
                         .WithMany()
-                        .HasForeignKey("UNIDAD_ID");
+                        .HasForeignKey("UnidadId");
 
                     b.Navigation("UnidadSAT");
                 });

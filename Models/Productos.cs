@@ -3,33 +3,25 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Api_comerce.Models
 {
-    [Table("PRODUCTOS")]
+    [Table("Productos")]
     public class Productos
     {
         [Key]
         public int Id { get; set; }
-
-       
         public int? ProductoSatId { get; set; }
-
-        [Column("PREFIJO")]
         [StringLength(50)]
         public string? Prefijo { get; set; }
-
-        [Column("PRODUCTO")]
         [StringLength(80)]
         public string? NombreProducto { get; set; }
-
-        [Column("ACUMULADOR")]
+        [StringLength(300)]
+        public string? Descripcion { get; set; }
+        [StringLength(300)]
+        public string? DescripcionBreve { get; set; }
+        public string? Slug { get; set; }
+        public int? Rating { get; set; }
         public bool? Acumulador { get; set; }
-
-        [Column("PRODUCTO_ID_ACUMULADOR")]
         public int? ProductoIdAcumulador { get; set; }
-
-        [Column("LINEA_ID")]
         public int? LineaId { get; set; }
-
-        [Column("MARCA_ID")]
         public int? MarcaId { get; set; }
 
    

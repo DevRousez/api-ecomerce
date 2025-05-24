@@ -40,8 +40,6 @@ namespace Api_comerce.Controllers
         {
             dynamic ResultResponse = AuthService_.GoogleLogin(data);
             return (ResultResponse.Result.success == true) ? Ok(ResultResponse.Result) : BadRequest(ResultResponse.Result);
-
-
         }
        
     }

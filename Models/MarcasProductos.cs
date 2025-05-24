@@ -3,16 +3,17 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Api_comerce.Models
 {
-    [Table("MARCAS_PRODUCTO")]
+    [Table("MarcasProducto")]
     public class MarcaProductos
     {
         [Key]
         public int Id { get; set; }
 
         [StringLength(100)]
-        public string? MARCA { get; set; }
+        public string? Marca { get; set; }
+        public string? Slug { get; set; }
 
-        public DateTime? FECHA_CREADO { get; set; }
+        public DateTime? FechaCreado { get; set; }
 
     }
 }
