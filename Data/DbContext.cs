@@ -29,8 +29,13 @@ namespace Api_comerce.Data
                 new AccountsTypes { Id = 1, AccountType = "Manager",  IsActive = true },
                 new AccountsTypes { Id = 2, AccountType = "Asesor",  IsActive = true },
                 new AccountsTypes { Id = 3, AccountType = "Cliente",  IsActive = true }
-               
-                );
+            );
+
+            modelBuilder.Entity<ImagenProducto>()
+                .HasOne(ip => ip.ProductosEmpaque)
+                .WithMany()
+                .HasForeignKey(ip => new { ip.ProductoId, ip.EmpaqueId })
+                .OnDelete(DeleteBehavior.Cascade);
                 
             modelBuilder.Entity<Productos>()
                 .HasOne(p => p.ProductoSat)
