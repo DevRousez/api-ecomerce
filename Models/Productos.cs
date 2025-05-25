@@ -24,7 +24,12 @@ namespace Api_comerce.Models
         public int? LineaId { get; set; }
         public int? MarcaId { get; set; }
 
-   
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public DateTime CreatedAt { get; set; }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public DateTime UpdatedAt { get; set; }
+
         //FK
 
         [ForeignKey("ProductoSatId")]
@@ -36,6 +41,10 @@ namespace Api_comerce.Models
         [ForeignKey("MarcaId")]
         public virtual MarcaProductos? MarcaProducto { get; set; }
 
-        
+
+        public virtual ICollection<ProductosEmpaque>? ProductosEmpaque { get; set; }
+
+        [ForeignKey("UnidadId")]
+        public virtual UnidadSAT? UnidadSAT { get; set; }
     }
 }

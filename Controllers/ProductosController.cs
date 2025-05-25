@@ -1,5 +1,7 @@
 ﻿using Api_comerce.Data;
+using Api_comerce.Dtos;
 using Api_comerce.Models;
+using Api_comerce.Services.Products;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,38 +11,28 @@ namespace Api_comerce.Controllers
     [Route("api/[controller]")]
     public class ProductosController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IProductsService _productsService;
 
-        public ProductosController(AppDbContext context)
+        public ProductosController(IProductsService productsService)
         {
-            _context = context;
+            _productsService = productsService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Productos>>> GetProductos()
+        public async Task<ActionResult<IEnumerable<ProductoEcommerceDto>>> GetProductos()
         {
-            return await _context.Productos
-                .Include(p => p.ProductoSat)
-                .Include(p => p.MarcaProducto)
-                .Include(p => p.Linea)
-            .ToListAsync();
+            var productos = await _productsService.GetAllProductosAsync();
+            return Ok(productos);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Productos>> GetProducto(int id)
+        public async Task<ActionResult<ProductoEcommerceDto>> GetProducto(int id)
         {
-            var producto = await _context.Productos
-                .Include(p => p.ProductoSat)
-                .Include(p => p.MarcaProducto)
-                .Include(p => p.Linea)
-                .FirstOrDefaultAsync(p => p.Id == id);
-
+            var producto = await _productsService.GetProductoByIdAsync(id);
             if (producto == null)
-            {
                 return NotFound();
-            }
 
-            return producto;
+            return Ok(producto);
         }
     }
 }

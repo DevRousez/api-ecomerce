@@ -2,6 +2,7 @@ using Api_comerce.Data;
 using Microsoft.EntityFrameworkCore;
 using Api_comerce.Services.Authentication;
 using Microsoft.EntityFrameworkCore;
+using Api_comerce.Services.Products;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +17,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+builder.Services.AddScoped<IProductsService, ProductsService>();
 
 builder.Services.AddCors(options =>
 {
