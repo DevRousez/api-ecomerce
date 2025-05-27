@@ -1,4 +1,5 @@
-﻿using Api_comerce.Dtos;
+﻿using System.Collections.Generic;
+using Api_comerce.Dtos;
 
 namespace Api_comerce.Services.Products
 {
@@ -6,5 +7,9 @@ namespace Api_comerce.Services.Products
     {
         Task<List<ProductoEcommerceDto>> GetAllProductosAsync();
         Task<ProductoEcommerceDto?> GetProductoByIdAsync(int id);
+        Task<List<ProductoEcommerceDto>> GetProductosLimitAsync(int limit = 10, int offset = 0);
+
+
+
     }
 }

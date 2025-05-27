@@ -22,8 +22,7 @@ namespace Api_comerce.Models
         public virtual Productos Producto { get; set; } = null!;
 
         [ForeignKey("EmpaqueId")]
-        public virtual Empaques Empaque { get; set; } = null!;
- 
+        public virtual Empaques? Empaque { get; set; }
 
-}
+    }
 }

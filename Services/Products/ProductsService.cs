@@ -1,9 +1,12 @@
 ﻿using Api_comerce.Data;
 using Api_comerce.Dtos;
+using Azure.Core;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-
+using Microsoft.AspNetCore.Http;
+using System.Linq;
+using Api_comerce.Models;
 
 
 namespace Api_comerce.Services.Products
@@ -11,15 +14,16 @@ namespace Api_comerce.Services.Products
     public class ProductsService : IProductsService
     {
         private readonly AppDbContext _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ProductsService(AppDbContext context)
+        public ProductsService(AppDbContext context, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
+            _httpContextAccessor = httpContextAccessor;
         }
-
         public async Task<List<ProductoEcommerceDto>> GetAllProductosAsync()
         {
-
+            var baseUrl = GetBaseUrl();
             var defaultBadges = new List<MarcaProductoDto>
 {
                 new MarcaProductoDto { Id = 0, Marca = "NO DATO", Slug = "no-dato" }
@@ -77,90 +81,57 @@ namespace Api_comerce.Services.Products
                    }
                  : defaultBadges,
                     Images = new List<ImageDto>
-                    {
+{
                         new ImageDto
                         {
                             Id = 0,
-                            Name = "NO DATO",
-                            Width = 0,
-                            Height = 0,
-                            Url = "NO DATO",
+                            Name = "Sayer-Generic.jpg",
+                            Width = 800,
+                            Height = 800,
+                            Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg",
                             Formats = new FormatDto
                             {
-                                Thumbnail = new FormatItemDto { Url = "NO DATO", Width = 156, Height = 156 },
-                                Small = new FormatItemDto { Url = "NO DATO", Width = 500, Height = 500 },
-                                Medium = new FormatItemDto { Url = "NO DATO", Width = 750, Height = 750 },
-                                Large = new FormatItemDto { Url = "NO DATO", Width = 1000, Height = 1000 }
+                                Thumbnail = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 156, Height = 156 },
+                                Small = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 500, Height = 500 },
+                                Medium = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 750, Height = 750 },
+                                Large = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 1000, Height = 1000 }
                             }
                         }
                     },
 
-                    //Images = p.Imagenes != null && p.Imagenes.Any()
-                    //? p.Imagenes.Select(img => new ImagenDto
-                    //{
-                    //    Id = img.Id,
-                    //    Name = img.Nombre ?? "NO DATO",
-                    //    Width = img.Ancho,
-                    //    Height = img.Alto,
-                    //    Url = img.Url ?? "NO DATO",
-                    //    Formats = new FormatDto
-                    //    {
-                    //        Thumbnail = new FormatItemDto { Url = img.ThumbnailUrl ?? "NO DATO", Width = 156, Height = 156 },
-                    //        Small = new FormatItemDto { Url = img.SmallUrl ?? "NO DATO", Width = 500, Height = 500 },
-                    //        Medium = new FormatItemDto { Url = img.MediumUrl ?? "NO DATO", Width = 750, Height = 750 },
-                    //        Large = new FormatItemDto { Url = img.LargeUrl ?? "NO DATO", Width = 1000, Height = 1000 }
-                    //    }
-                    //}).ToList()
-                    //: new List<ImagenDto>
-                    //{
-                    //    new ImagenDto
-                    //    {
-                    //        Id = 0,
-                    //        Name = "NO DATO",
-                    //        Width = 0,
-                    //        Height = 0,
-                    //        Url = "NO DATO",
-                    //        Formats = new FormatDto
-                    //        {
-                    //            Thumbnail = new FormatItemDto { Url = "NO DATO", Width = 156, Height = 156 },
-                    //            Small = new FormatItemDto { Url = "NO DATO", Width = 500, Height = 500 },
-                    //            Medium = new FormatItemDto { Url = "NO DATO", Width = 750, Height = 750 },
-                    //            Large = new FormatItemDto { Url = "NO DATO", Width = 1000, Height = 1000 }
-                    //        }
-                    //    }
-                    //},
-
-                    Thumbnail =  new ImageDto
+                    Thumbnail = new ImageDto
                     {
                         Id = 0,
-                        Name = "NO DATO",
+                        Name = "Sayer-Generic.jpg",
                         Width = 100,
                         Height = 80,
-                        Url = "http://url",
+                        Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg",
                         Formats = new FormatDto
                         {
-                            Thumbnail = new FormatItemDto { Url = "http://urlNODATO", Width = 156, Height = 156 },
-                            Small = new FormatItemDto { Url = "http://urlNODATO", Width = 500, Height = 500 },
-                            Medium = new FormatItemDto { Url = "http://urlNODATO", Width = 750, Height = 750 },
-                            Large = new FormatItemDto { Url = "http://urlNODATO", Width = 1000, Height = 1000 }
+                            Thumbnail = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 156, Height = 156 },
+                            Small = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 500, Height = 500 },
+                            Medium = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 750, Height = 750 },
+                            Large = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 1000, Height = 1000 }
                         }
-                    } ,
+                    },
 
                     ThumbnailBack = new ImageDto
                     {
                         Id = 1,
-                        Name = "NO DATO",
+                        Name = "Sayer-Generic.jpg",
                         Width = 400,
                         Height = 270,
-                        Url = "http://urlNODATO",
+                        Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg",
                         Formats = new FormatDto
                         {
-                            Thumbnail = new FormatItemDto { Url = "http://urlNODATO", Width = 156, Height = 156 },
-                            Small = new FormatItemDto { Url = "http://urlNODATO", Width = 500, Height = 500 },
-                            Medium = new FormatItemDto { Url = "http://urlNODATO", Width = 750, Height = 750 },
-                            Large = new FormatItemDto { Url = "http://urlNODATO", Width = 1000, Height = 1000 }
+                            Thumbnail = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 156, Height = 156 },
+                            Small = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 500, Height = 500 },
+                            Medium = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 750, Height = 750 },
+                            Large = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 1000, Height = 1000 }
                         }
-                    } ,
+                    },
+
+
 
                     ProductCategories = p.Linea != null ? new List<LineaDto>
                     {
@@ -187,12 +158,14 @@ namespace Api_comerce.Services.Products
 
         public async Task<ProductoEcommerceDto?>GetProductoByIdAsync(int id)
         {
-
+            var baseUrl = GetBaseUrl();
 
             var defaultBadges = new List<MarcaProductoDto>
 {
                 new MarcaProductoDto { Id = 0, Marca = "NO DATO", Slug = "no-dato" }
             };
+
+    
 
             var productoDto = await _context.Productos
      .Include(p => p.Linea)
@@ -218,22 +191,30 @@ namespace Api_comerce.Services.Products
          CreatedAt = DateTime.Now,
          UpdatedAt = DateTime.Now,
          Sizes = p.ProductosEmpaque != null
-             ? p.ProductosEmpaque.Select(e => new EmpaqueDto
-             {
-                 Id = e.EmpaqueId,
-                 Codigo = e.Codigo ?? "NO DATO",
-                 PCompra = e.PCompra ?? 0,
-                 PVenta = e.PVenta ?? 0,
-                 Descuento = e.Descuento ?? 0,
-                 Activo = e.Activo ?? false,
-                 UnidadSat = e.Empaque != null && e.Empaque.UnidadSAT != null ? new UnidadSatDto
-                 {
-                     Id = e.Empaque.UnidadSAT.Id,
-                     ClaveUnidad = e.Empaque.UnidadSAT.ClaveUnidad ?? "NO DATO",
-                     UnidadSat = e.Empaque.UnidadSAT.UnidadSat ?? "NO DATO"
-                 } : null
-             }).ToList()
-             : new List<EmpaqueDto>(),
+    ? p.ProductosEmpaque.Select(e => new EmpaqueDto
+    {
+        Id = e.EmpaqueId,
+       // *** CAMBIO AQUÍ: Usar operador ternario para verificar si e.Empaque es null ***
+        Empaque = e.Empaque != null ? e.Empaque.Empaque ?? "NO DATO" : "NO DATO",
+        Contenido = e.Empaque != null ? e.Empaque.Contenido ?? 0 : 0,
+        Sincronizado = e.Empaque != null ? e.Empaque.Sincronizado ?? false : false,
+        CodigoEmpaque = e.Empaque != null ? e.Empaque.CodigoEmpaque ?? "NO DATO" : "NO DATO",
+        FechaCreado = e.Empaque != null ? e.Empaque.FechaCreado : null, // Mantenemos null para DateTime?
+        Codigo = e.Codigo ?? "NO DATO",
+        PCompra = e.PCompra ?? 0,
+        PVenta = e.PVenta ?? 0,
+        Descuento = e.Descuento ?? 0,
+        Activo = e.Activo ?? false,
+        UnidadSat = e.Empaque != null && e.Empaque.UnidadSAT != null
+            ? new UnidadSatDto
+            {
+                Id = e.Empaque.UnidadSAT.Id,
+                ClaveUnidad = e.Empaque.UnidadSAT.ClaveUnidad ?? "NO DATO",
+                UnidadSat = e.Empaque.UnidadSAT.UnidadSat ?? "NO DATO"
+            }
+            : null
+    }).ToList()
+    : new List<EmpaqueDto>(),
          Colors = new List<string> { "#eb7b8b", "#000000", "#927764" },
          Badges = p.MarcaProducto != null
              ? new List<MarcaProductoDto> {
@@ -249,33 +230,35 @@ namespace Api_comerce.Services.Products
          Thumbnail = new ImageDto
          {
              Id = 0,
-             Name = "NO DATO",
+             Name = "Sayer-Generic.jpg",
              Width = 100,
              Height = 80,
-             Url = "http://url",
+             Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg",
              Formats = new FormatDto
              {
-                 Thumbnail = new FormatItemDto { Url = "http://urlNODATO", Width = 156, Height = 156 },
-                 Small = new FormatItemDto { Url = "http://urlNODATO", Width = 500, Height = 500 },
-                 Medium = new FormatItemDto { Url = "http://urlNODATO", Width = 750, Height = 750 },
-                 Large = new FormatItemDto { Url = "http://urlNODATO", Width = 1000, Height = 1000 }
+                 Thumbnail = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 156, Height = 156 },
+                 Small = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 500, Height = 500 },
+                 Medium = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 750, Height = 750 },
+                 Large = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 1000, Height = 1000 }
              }
          },
+
          ThumbnailBack = new ImageDto
          {
              Id = 1,
-             Name = "NO DATO",
+             Name = "Sayer-Generic.jpg",
              Width = 400,
              Height = 270,
-             Url = "http://urlNODATO",
+             Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg",
              Formats = new FormatDto
              {
-                 Thumbnail = new FormatItemDto { Url = "http://urlNODATO", Width = 156, Height = 156 },
-                 Small = new FormatItemDto { Url = "http://urlNODATO", Width = 500, Height = 500 },
-                 Medium = new FormatItemDto { Url = "http://urlNODATO", Width = 750, Height = 750 },
-                 Large = new FormatItemDto { Url = "http://urlNODATO", Width = 1000, Height = 1000 }
+                 Thumbnail = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 156, Height = 156 },
+                 Small = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 500, Height = 500 },
+                 Medium = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 750, Height = 750 },
+                 Large = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 1000, Height = 1000 }
              }
          },
+
          ProductCategories = p.Linea != null
              ? new List<LineaDto> {
                 new LineaDto { Id = p.Linea.Id, Linea = p.Linea.Linea, Slug = p.Linea.Slug }
@@ -295,20 +278,22 @@ namespace Api_comerce.Services.Products
                 productoDto.Images = new List<ImageDto>
     {
         new ImageDto
-        {
-            Id = 0,
-            Name = "NO DATO",
-            Width = 0,
-            Height = 0,
-            Url = "NO DATO",
-            Formats = new FormatDto
-            {
-                Thumbnail = new FormatItemDto { Url = "NO DATO", Width = 156, Height = 156 },
-                Small = new FormatItemDto { Url = "NO DATO", Width = 500, Height = 500 },
-                Medium = new FormatItemDto { Url = "NO DATO", Width = 750, Height = 750 },
-                Large = new FormatItemDto { Url = "NO DATO", Width = 1000, Height = 1000 }
-            }
-        }
+                        {
+                            Id = 0,
+                            Name = "Sayer-Generic.jpg",
+                            Width = 800,
+                            Height = 800,
+                            Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg",
+                            
+                            Formats = new FormatDto
+                            {
+                                Thumbnail = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 156, Height = 156 },
+                                Small = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 500, Height = 500 },
+                                Medium = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 750, Height = 750 },
+                                Large = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 1000, Height = 1000 }
+                            }
+                        }
+
     };
             }
 
@@ -318,6 +303,161 @@ namespace Api_comerce.Services.Products
 
 
            
+        }
+
+
+
+
+        public async Task<List<ProductoEcommerceDto>> GetProductosLimitAsync(int limit = 10, int offset = 0)
+        {
+            var baseUrl = GetBaseUrl();
+
+            var defaultBadges = new List<MarcaProductoDto>
+{
+                new MarcaProductoDto { Id = 0, Marca = "NO DATO", Slug = "no-dato" }
+            };
+
+
+
+            var productoDto = await _context.Productos
+     .Include(p => p.Linea)
+     .Include(p => p.MarcaProducto)
+     .Include(p => p.ProductoSat)
+     .Include(p => p.ProductosEmpaque)
+         .ThenInclude(pe => pe.Empaque)
+             .ThenInclude(e => e.UnidadSAT)
+             .Skip(offset)
+      .Take(limit)
+     .Select(p => new ProductoEcommerceDto
+     {
+         Id = p.Id,
+         Name = p.NombreProducto ?? "NO DATO",
+         Featured = false,
+         Price = p.ProductosEmpaque.FirstOrDefault().PVenta ?? 0,
+         SalePrice = null,
+         OnSale = false,
+         Slug = p.Slug ?? "no-dato",
+         IsStock = true,
+         RatingCount = p.Rating ?? 0,
+         Description = p.Descripcion ?? "NO DATO",
+         ShortDescription = p.DescripcionBreve ?? "NO DATO",
+         CreatedAt = DateTime.Now,
+         UpdatedAt = DateTime.Now,
+         Sizes = p.ProductosEmpaque != null
+    ? p.ProductosEmpaque.Select(e => new EmpaqueDto
+    {
+        Id = e.EmpaqueId,
+        // *** CAMBIO AQUÍ: Usar operador ternario para verificar si e.Empaque es null ***
+        Empaque = e.Empaque != null ? e.Empaque.Empaque ?? "NO DATO" : "NO DATO",
+        Contenido = e.Empaque != null ? e.Empaque.Contenido ?? 0 : 0,
+        Sincronizado = e.Empaque != null ? e.Empaque.Sincronizado ?? false : false,
+        CodigoEmpaque = e.Empaque != null ? e.Empaque.CodigoEmpaque ?? "NO DATO" : "NO DATO",
+        FechaCreado = e.Empaque != null ? e.Empaque.FechaCreado : null, // Mantenemos null para DateTime?
+        Codigo = e.Codigo ?? "NO DATO",
+        PCompra = e.PCompra ?? 0,
+        PVenta = e.PVenta ?? 0,
+        Descuento = e.Descuento ?? 0,
+        Activo = e.Activo ?? false,
+        UnidadSat = e.Empaque != null && e.Empaque.UnidadSAT != null
+            ? new UnidadSatDto
+            {
+                Id = e.Empaque.UnidadSAT.Id,
+                ClaveUnidad = e.Empaque.UnidadSAT.ClaveUnidad ?? "NO DATO",
+                UnidadSat = e.Empaque.UnidadSAT.UnidadSat ?? "NO DATO"
+            }
+            : null
+    }).ToList()
+    : new List<EmpaqueDto>(),
+         Colors = new List<string> { "#eb7b8b", "#000000", "#927764" },
+         Badges = p.MarcaProducto != null
+             ? new List<MarcaProductoDto> {
+                new MarcaProductoDto
+                {
+                    Id = p.MarcaProducto.Id,
+                    Marca = p.MarcaProducto.Marca ?? "NO DATO",
+                    Slug = p.MarcaProducto.Slug ?? "NO DATO"
+                }
+             }
+             : defaultBadges,
+         // Aquí NO asignar Images todavía
+         Thumbnail = new ImageDto
+         {
+             Id = 0,
+             Name = "Sayer-Generic.jpg",
+             Width = 100,
+             Height = 80,
+             Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg",
+             Formats = new FormatDto
+             {
+                 Thumbnail = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 156, Height = 156 },
+                 Small = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 500, Height = 500 },
+                 Medium = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 750, Height = 750 },
+                 Large = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 1000, Height = 1000 }
+             }
+         },
+
+         ThumbnailBack = new ImageDto
+         {
+             Id = 1,
+             Name = "Sayer-Generic.jpg",
+             Width = 400,
+             Height = 270,
+             Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg",
+             Formats = new FormatDto
+             {
+                 Thumbnail = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 156, Height = 156 },
+                 Small = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 500, Height = 500 },
+                 Medium = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 750, Height = 750 },
+                 Large = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 1000, Height = 1000 }
+             }
+         },
+
+         ProductCategories = p.Linea != null
+             ? new List<LineaDto> {
+                new LineaDto { Id = p.Linea.Id, Linea = p.Linea.Linea, Slug = p.Linea.Slug }
+             }
+             : new List<LineaDto>(),
+         ProductBrands = p.MarcaProducto != null
+             ? new List<MarcaProductoDto> {
+                new MarcaProductoDto { Id = p.MarcaProducto.Id, Marca = p.MarcaProducto.Marca, Slug = p.MarcaProducto.Slug }
+             }
+             : new List<MarcaProductoDto>()
+     })
+            .ToListAsync();
+
+            foreach (var producto in productoDto)
+            {
+                producto.Images = new List<ImageDto>
+        {
+            new ImageDto
+            {
+                Id = 0,
+                Name = "Sayer-Generic.jpg",
+                Width = 800,
+                Height = 800,
+                Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg",
+                Formats = new FormatDto
+                {
+                    Thumbnail = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 156, Height = 156 },
+                    Small = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 500, Height = 500 },
+                    Medium = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 750, Height = 750 },
+                    Large = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 1000, Height = 1000 }
+                }
+            }
+        };
+            }
+
+            return productoDto;
+        }
+
+        private string GetBaseUrl()
+        {
+            var request = _httpContextAccessor.HttpContext?.Request;
+
+            if (request == null)
+                return string.Empty;
+
+            return $"{request.Scheme}://{request.Host}";
         }
     }
 }

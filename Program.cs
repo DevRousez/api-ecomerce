@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Api_comerce.Services.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Api_comerce.Services.Products;
+using Microsoft.Extensions.FileProviders;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,9 +31,10 @@ builder.Services.AddCors(options =>
 });
 
 // Swagger/OpenAPI
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddHttpContextAccessor();
 var app = builder.Build();
 
 // Middleware en entorno desarrollo
@@ -41,6 +43,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "Assets")),
+    RequestPath = "/Assets"
+});
 
 app.UseHttpsRedirection();
 

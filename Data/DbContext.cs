@@ -16,6 +16,7 @@ namespace Api_comerce.Data
         public DbSet<UnidadSAT> UnidadSAT { get; set; }
         public DbSet<ProductoSat> ProductoSat { get; set; }
         public DbSet<Lineas> Lineas { get; set; }
+        public DbSet<ImagenProducto> ImagenProducto { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -31,10 +32,10 @@ namespace Api_comerce.Data
                 new AccountsTypes { Id = 3, AccountType = "Cliente",  IsActive = true }
                
                 );
-                
+
             modelBuilder.Entity<Productos>()
                 .HasOne(p => p.ProductoSat)
-                .WithMany() 
+                .WithMany()
                 .HasForeignKey(p => p.ProductoSatId);
 
             modelBuilder.Entity<Productos>()
@@ -46,6 +47,32 @@ namespace Api_comerce.Data
                 .HasOne(p => p.MarcaProducto)
                 .WithMany()
                 .HasForeignKey(p => p.MarcaId);
+
+            modelBuilder.Entity<ProductosEmpaque>()
+    .HasKey(pe => new { pe.ProductoId, pe.EmpaqueId });
+
+            modelBuilder.Entity<ProductosEmpaque>()
+                .HasOne(pe => pe.Producto)
+                .WithMany(p => p.ProductosEmpaque)
+                .HasForeignKey(pe => pe.ProductoId);
+
+            modelBuilder.Entity<ProductosEmpaque>()
+                .HasOne(pe => pe.Empaque)
+                .WithMany()
+                .HasForeignKey(pe => pe.EmpaqueId);
+
+
+            //modelBuilder.Entity<ImagenProducto>()
+            //.HasOne(ip => ip.ProductosEmpaque)
+            //.WithMany(pe => pe.Imagenes)
+            //.HasForeignKey(ip => new { ip.ProductoId, ip.EmpaqueId });
+
+
+            //modelBuilder.Entity<Productos>().Ignore(p => p.CreatedAt);
+            //modelBuilder.Entity<Productos>().Ignore(p => p.UpdatedAt);
+            //modelBuilder.Entity<Productos>().Ignore(p => p.UnidadSAT);
+            //modelBuilder.Entity<Empaques>().Ignore(p => p.UnidadId);
+
         }
 
 
