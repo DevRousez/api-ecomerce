@@ -4,12 +4,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Api_comerce.Models
 {
-    [PrimaryKey(nameof(ProductoId), nameof(EmpaqueId))]
     [Table("ProductoEmpaque")]
     public class ProductosEmpaque
     {
+        [Key]
+        public int Id {get;set;}
+
         public int ProductoId { get; set; }
         public int EmpaqueId { get; set; }
+
         [StringLength(20)]
         public string? Codigo { get; set; }
         public decimal? PCompra { get; set; }
@@ -19,7 +22,7 @@ namespace Api_comerce.Models
 
         // Relaciones de navegación (si tienes):
         [ForeignKey("ProductoId")]
-        public virtual Productos Producto { get; set; } = null!;
+        public virtual Productos Producto { get; set; }
 
         [ForeignKey("EmpaqueId")]
         public virtual Empaques? Empaque { get; set; }

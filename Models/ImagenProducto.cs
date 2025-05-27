@@ -33,8 +33,8 @@ namespace Api_comerce.Models
         public int ProductoId { get; set; }
         public int EmpaqueId { get; set; }
 
-        [ForeignKey(nameof(ProductoId) + "," + nameof(EmpaqueId))]
-        public ProductosEmpaque ProductosEmpaque { get; set; } = null!;
+        //[ForeignKey(nameof(ProductoId) + "," + nameof(EmpaqueId))]
+        public ProductoEmpaque ProductosEmpaque { get; set; } = null!;
 
     // public ICollection<ImagenFormato> Formats { get; set; } = new List<ImagenFormato>();
     }

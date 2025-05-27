@@ -48,8 +48,6 @@ namespace Api_comerce.Data
                 .WithMany()
                 .HasForeignKey(p => p.MarcaId);
 
-            modelBuilder.Entity<ProductosEmpaque>()
-    .HasKey(pe => new { pe.ProductoId, pe.EmpaqueId });
 
             modelBuilder.Entity<ProductosEmpaque>()
                 .HasOne(pe => pe.Producto)

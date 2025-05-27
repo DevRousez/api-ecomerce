@@ -42,9 +42,9 @@ namespace Api_comerce.Models
         public virtual MarcaProductos? MarcaProducto { get; set; }
 
 
-        public virtual ICollection<ProductosEmpaque>? ProductosEmpaque { get; set; }
+        public virtual ICollection<ProductoEmpaque>? ProductosEmpaque { get; set; }
 
-        [ForeignKey("UnidadId")]
-        public virtual UnidadSAT? UnidadSAT { get; set; }
+       // [ForeignKey("UnidadId")]
+       // public virtual UnidadSAT? UnidadSAT { get; set; }
     }
 }

@@ -158,6 +158,83 @@ namespace Api_comerce.Migrations
                     b.ToTable("Empaques");
                 });
 
+            modelBuilder.Entity("Api_comerce.Models.ImagenProducto", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AlternativeText")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Caption")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("EmpaqueId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Ext")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Hash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Height")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Mime")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PreviewUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ProductoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductosEmpaqueId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Provider")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProviderMetadata")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Size")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Width")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductosEmpaqueId");
+
+                    b.ToTable("ImagenProducto");
+                });
+
             modelBuilder.Entity("Api_comerce.Models.Lineas", b =>
                 {
                     b.Property<int>("Id")
@@ -204,6 +281,45 @@ namespace Api_comerce.Migrations
                     b.ToTable("MarcasProducto");
                 });
 
+            modelBuilder.Entity("Api_comerce.Models.ProductoEmpaque", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool?>("Activo")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Codigo")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<double?>("Descuento")
+                        .HasColumnType("float");
+
+                    b.Property<int>("EmpaqueId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("PCompra")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("PVenta")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("ProductoId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmpaqueId");
+
+                    b.HasIndex("ProductoId");
+
+                    b.ToTable("ProductoEmpaque");
+                });
+
             modelBuilder.Entity("Api_comerce.Models.ProductoSat", b =>
                 {
                     b.Property<int>("Id")
@@ -237,6 +353,10 @@ namespace Api_comerce.Migrations
 
                     b.Property<bool?>("Acumulador")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Descripcion")
                         .HasMaxLength(300)
@@ -272,6 +392,10 @@ namespace Api_comerce.Migrations
                     b.Property<string>("Slug")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime2");
+
                     b.HasKey("Id");
 
                     b.HasIndex("LineaId");
@@ -281,37 +405,6 @@ namespace Api_comerce.Migrations
                     b.HasIndex("ProductoSatId");
 
                     b.ToTable("Productos");
-                });
-
-            modelBuilder.Entity("Api_comerce.Models.ProductosEmpaque", b =>
-                {
-                    b.Property<int>("ProductoId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("EmpaqueId")
-                        .HasColumnType("int");
-
-                    b.Property<bool?>("Activo")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Codigo")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<double?>("Descuento")
-                        .HasColumnType("float");
-
-                    b.Property<decimal?>("PCompra")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("PVenta")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("ProductoId", "EmpaqueId");
-
-                    b.HasIndex("EmpaqueId");
-
-                    b.ToTable("ProductoEmpaque");
                 });
 
             modelBuilder.Entity("Api_comerce.Models.UnidadSAT", b =>
@@ -358,6 +451,36 @@ namespace Api_comerce.Migrations
                     b.Navigation("UnidadSAT");
                 });
 
+            modelBuilder.Entity("Api_comerce.Models.ImagenProducto", b =>
+                {
+                    b.HasOne("Api_comerce.Models.ProductoEmpaque", "ProductosEmpaque")
+                        .WithMany()
+                        .HasForeignKey("ProductosEmpaqueId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ProductosEmpaque");
+                });
+
+            modelBuilder.Entity("Api_comerce.Models.ProductoEmpaque", b =>
+                {
+                    b.HasOne("Api_comerce.Models.Empaques", "Empaque")
+                        .WithMany()
+                        .HasForeignKey("EmpaqueId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Api_comerce.Models.Productos", "Producto")
+                        .WithMany("ProductosEmpaque")
+                        .HasForeignKey("ProductoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Empaque");
+
+                    b.Navigation("Producto");
+                });
+
             modelBuilder.Entity("Api_comerce.Models.Productos", b =>
                 {
                     b.HasOne("Api_comerce.Models.Lineas", "Linea")
@@ -379,28 +502,14 @@ namespace Api_comerce.Migrations
                     b.Navigation("ProductoSat");
                 });
 
-            modelBuilder.Entity("Api_comerce.Models.ProductosEmpaque", b =>
-                {
-                    b.HasOne("Api_comerce.Models.Empaques", "Empaque")
-                        .WithMany()
-                        .HasForeignKey("EmpaqueId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Api_comerce.Models.Productos", "Producto")
-                        .WithMany()
-                        .HasForeignKey("ProductoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Empaque");
-
-                    b.Navigation("Producto");
-                });
-
             modelBuilder.Entity("Api_comerce.Models.AccountsTypes", b =>
                 {
                     b.Navigation("Accounts");
+                });
+
+            modelBuilder.Entity("Api_comerce.Models.Productos", b =>
+                {
+                    b.Navigation("ProductosEmpaque");
                 });
 #pragma warning restore 612, 618
         }
