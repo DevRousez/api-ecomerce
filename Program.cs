@@ -4,6 +4,7 @@ using Api_comerce.Services.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Api_comerce.Services.Products;
 using Microsoft.Extensions.FileProviders;
+using Api_comerce.Services.Lineas;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,6 +20,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddControllers();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IProductsService, ProductsService>();
+builder.Services.AddScoped<ILineasService, LineasService>();
 
 builder.Services.AddCors(options =>
 {

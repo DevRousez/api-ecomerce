@@ -23,7 +23,7 @@ namespace Api_comerce.Services.Products
         }
         public async Task<List<ProductoEcommerceDto>> GetAllProductosAsync()
         {
-            var baseUrl = GetBaseUrl();
+            var baseUrl = "";
             var defaultBadges = new List<MarcaProductoDto>
 {
                 new MarcaProductoDto { Id = 0, Marca = "NO DATO", Slug = "no-dato" }
@@ -158,7 +158,7 @@ namespace Api_comerce.Services.Products
 
         public async Task<ProductoEcommerceDto?>GetProductoByIdAsync(int id)
         {
-            var baseUrl = GetBaseUrl();
+            var baseUrl = "";
 
             var defaultBadges = new List<MarcaProductoDto>
 {
@@ -310,7 +310,7 @@ namespace Api_comerce.Services.Products
 
         public async Task<List<ProductoEcommerceDto>> GetProductosLimitAsync(int limit = 10, int offset = 0)
         {
-            var baseUrl = GetBaseUrl();
+            var baseUrl ="";
 
             var defaultBadges = new List<MarcaProductoDto>
 {
