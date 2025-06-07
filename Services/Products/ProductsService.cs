@@ -46,7 +46,7 @@ namespace Api_comerce.Services.Products
             var productos = productosRaw.Select(p => new ProductoEcommerceDto
             {
                 Id = p.Id,
-                Name = $"{p?.Codigo ?? "SIN-COD"} - {p.Producto.NombreProducto ?? "NO DATO"} - {p?.Empaque?.UnidadSAT?.UnidadSat ?? "SIN UNIDAD"}",
+                Name = $"{p?.Codigo ?? "SIN-COD"} - {p.Producto.NombreProducto ?? "NO DATO"} - {p?.Empaque?.Empaque ?? "SIN UNIDAD"}",
                 Featured = false,
                 Price = p?.PVenta ?? 0,
                 SalePrice = null,
@@ -200,7 +200,7 @@ namespace Api_comerce.Services.Products
         (
             p.Empaque != null &&
             p.Empaque.UnidadSAT != null
-            ? p.Empaque.UnidadSAT.UnidadSat
+            ? p.Empaque.Empaque
             : "NO DATO"
         ),
          Featured = false,
