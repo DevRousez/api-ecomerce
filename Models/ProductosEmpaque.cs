@@ -27,5 +27,7 @@ namespace Api_comerce.Models
         [ForeignKey("EmpaqueId")]
         public virtual Empaques? Empaque { get; set; }
 
+        public ICollection<ImagenProducto> ImagenProducto { get; set; }
+
     }
 }
