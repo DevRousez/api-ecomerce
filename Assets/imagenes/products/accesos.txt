@@ -1,0 +1,3 @@
+GLOBAL_GPS_APP_ID="José Hemsani"
+GLOBAL_GPS_ACCESS_KEY=1tk7fp0e5ex38z5rigwh7rsi91la7y28
+GLOBAL_GPS_API_URL=https://open.iopgps.com

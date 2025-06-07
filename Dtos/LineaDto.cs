@@ -7,4 +7,5 @@
         public string? Slug { get; set; }
         public DateTime? FechaCreado { get; set; }
     }
+    
 }

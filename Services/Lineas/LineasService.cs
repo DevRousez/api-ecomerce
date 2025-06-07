@@ -15,27 +15,12 @@ namespace Api_comerce.Services.Lineas
             _context = context;
            
         }
-        public async Task<List<LineaDto>> GetCategories()
-        {
-          
-
-            return await _context.Lineas
-               
-                .Select(lin => new LineaDto
-                {
-                    Id = lin.Id,
-                    Linea = lin.Linea ?? "NO DATO",
-                    Slug = lin.Slug,
-                    FechaCreado = lin.FechaCreado,
-
-                }).ToListAsync();
-
-        }
+       
         public async Task<LineaDto> GetCategoriesId(int id)
         {
 
 
-            return  _context.Lineas
+            return _context.Lineas
                 .Where(lin => lin.Id == id)
                 .Select(lin => new LineaDto
                 {
@@ -48,23 +33,13 @@ namespace Api_comerce.Services.Lineas
 
         }
 
-        public async Task<List<LineaDto>> GetCategorieslimit(int limit, int offset)
-        {
+        //public async Task<List<ProductsCategoriesDTO>> GetCategorieslimit(int limit, int offset)
+        //{
 
 
-            return await _context.Lineas
-                .Skip(offset)
-      .Take(limit)
-                .Select(lin => new LineaDto
-                {
-                    Id = lin.Id,
-                    Linea = lin.Linea ?? "NO DATO",
-                    Slug = lin.Slug,
-                    FechaCreado = lin.FechaCreado,
+        //    return new ProductsCategoriesDTO[];
 
-                }).ToListAsync();
-
-        }
+        //}
 
     }
 }

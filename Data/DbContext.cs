@@ -1,4 +1,5 @@
-﻿using Api_comerce.Models;
+﻿using Api_comerce.Dtos;
+using Api_comerce.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Api_comerce.Data
@@ -17,6 +18,7 @@ namespace Api_comerce.Data
         public DbSet<ProductoSat> ProductoSat { get; set; }
         public DbSet<Lineas> Lineas { get; set; }
         public DbSet<ImagenProducto> ImagenProducto { get; set; }
+        public DbSet<ProductoPlano> ProductoPlano { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -32,8 +34,9 @@ namespace Api_comerce.Data
                 new AccountsTypes { Id = 3, AccountType = "Cliente",  IsActive = true }
                
                 );
+          
 
-            modelBuilder.Entity<Productos>()
+        modelBuilder.Entity<Productos>()
                 .HasOne(p => p.ProductoSat)
                 .WithMany()
                 .HasForeignKey(p => p.ProductoSatId);
