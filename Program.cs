@@ -5,6 +5,11 @@ using Microsoft.EntityFrameworkCore;
 using Api_comerce.Services.Products;
 using Microsoft.Extensions.FileProviders;
 using Api_comerce.Services.Lineas;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Api_comerce.Services.JWTService;
+
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,7 +26,7 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IProductsService, ProductsService>();
 builder.Services.AddScoped<ILineasService, LineasService>();
-
+builder.Services.AddScoped<JwtService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy",
@@ -31,6 +36,24 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader() // Permitir cualquier encabezado HTTP
     );
 });
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        var config = builder.Configuration;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = config["Jwt:Issuer"],
+            ValidAudience = config["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]))
+        };
+    });
+
+builder.Services.AddAuthorization();
 
 // Swagger/OpenAPI
 
