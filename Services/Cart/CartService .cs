@@ -66,7 +66,10 @@ namespace Api_comerce.Services.Cart
         public async Task<List<CartItem>> GetCartAsync(int userId)
         {
             return await _context.CartItems
-                .Include(ci => ci.Product)
+                .Include(ci => ci.ProductEmpaque)
+                 .ThenInclude(pe => pe.Producto)
+                  .Include(ci => ci.ProductEmpaque)
+                    .ThenInclude(pe => pe.Empaque)
                 .Where(ci => ci.UserId == userId)
                 .ToListAsync();
         }
