@@ -14,6 +14,6 @@
         public DateTime UpdatedAt { get; set; }
 
         public Accounts? User { get; set; }
-        public ProductosEmpaque? Product { get; set; }
+        public ProductosEmpaque? ProductEmpaque { get; set; }
     }
 }

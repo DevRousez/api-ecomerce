@@ -76,7 +76,7 @@ namespace Api_comerce.Data
             .HasForeignKey(ci => ci.UserId);
 
             modelBuilder.Entity<CartItem>()
-                .HasOne(ci => ci.Product)
+                .HasOne(ci => ci.ProductEmpaque)
                 .WithMany()
                 .HasForeignKey(ci => ci.ProductId);
 
