@@ -19,6 +19,7 @@ namespace Api_comerce.Services.JWTService
         {
             var claims = new[]
             {
+
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Email, user.Email),
             new Claim("FullName", user.FullName),

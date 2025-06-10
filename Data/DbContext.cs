@@ -19,6 +19,10 @@ namespace Api_comerce.Data
         public DbSet<Lineas> Lineas { get; set; }
         public DbSet<ImagenProducto> ImagenProducto { get; set; }
         public DbSet<ProductoPlano> ProductoPlano { get; set; }
+        public DbSet<CartItem> CartItems { get; set; }
+
+
+        
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -62,6 +66,19 @@ namespace Api_comerce.Data
                 .WithMany()
                 .HasForeignKey(pe => pe.EmpaqueId);
 
+
+            //carrito 
+
+
+            modelBuilder.Entity<CartItem>()
+            .HasOne(ci => ci.User)
+            .WithMany(u => u.CartItems)
+            .HasForeignKey(ci => ci.UserId);
+
+            modelBuilder.Entity<CartItem>()
+                .HasOne(ci => ci.Product)
+                .WithMany()
+                .HasForeignKey(ci => ci.ProductId);
 
             //modelBuilder.Entity<ImagenProducto>()
             //.HasOne(ip => ip.ProductosEmpaque)
