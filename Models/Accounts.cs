@@ -29,6 +29,9 @@ namespace Api_comerce.Models
 
         [ForeignKey("AccountTypeId")]
         public AccountsTypes AccountsTypes { get; set; }
+
+
+        public ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
     }
 }
 
