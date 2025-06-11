@@ -9,33 +9,24 @@ namespace Api_comerce.Models
         [Key]
         public int Id { get; set; }
 
-        public string Name { get; set; } = string.Empty;
-        public string? AlternativeText { get; set; }
-        public string? Caption { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
-        public string Hash { get; set; } = string.Empty;
-        public string Ext { get; set; } = string.Empty;
-        public string Mime { get; set; } = string.Empty;
-        public double Size { get; set; }
-        public string Url { get; set; } = string.Empty;
-        public string? PreviewUrl { get; set; }
-        public string Provider { get; set; } = "local";
-        public string? ProviderMetadata { get; set; }
+        public int ProductEmpaqueId { get; set; }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public DateTime CreatedAt { get; set; }
+        public string Type { get; set; } = "original"; // original, thumbnail, small, etc.
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public DateTime UpdatedAt { get; set; }
+        public string Label { get; set; } // front, back, etc.
 
-        // Clave foránea compuesta
-        public int ProductoId { get; set; }
-        public int EmpaqueId { get; set; }
+        public string Url { get; set; }
 
-        //[ForeignKey(nameof(ProductoId) + "," + nameof(EmpaqueId))]
-        public ProductosEmpaque ProductosEmpaque { get; set; } = null!;
+        public int? Width { get; set; }
 
-    // public ICollection<ImagenFormato> Formats { get; set; } = new List<ImagenFormato>();
+        public int? Height { get; set; }
+
+        public decimal? SizeMb { get; set; }
+
+        public string MimeType { get; set; }
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public ProductosEmpaque ProductEmpaque { get; set; }
     }
 }

@@ -63,15 +63,96 @@ namespace Api_comerce.Services.Cart
             return result;
         }
 
-        public async Task<List<CartItem>> GetCartAsync(int userId)
+        public async Task<List<CartItemDto>> GetCartAsync(int userId)
         {
-            return await _context.CartItems
-                .Include(ci => ci.ProductEmpaque)
-                 .ThenInclude(pe => pe.Producto)
-                  .Include(ci => ci.ProductEmpaque)
-                    .ThenInclude(pe => pe.Empaque)
-                .Where(ci => ci.UserId == userId)
-                .ToListAsync();
+            var items = await _context.CartItems
+            .Where(ci => ci.UserId == userId)
+            .Select(ci => new CartItemDto
+            {
+                Id = ci.Id,
+                UserId = ci.UserId,
+                ProductId = ci.ProductId,
+                Quantity = ci.Quantity,
+                Price = ci.Price,
+                CreatedAt = ci.CreatedAt,
+                UpdatedAt = ci.UpdatedAt,
+                User = new AccountsDtocs
+                {
+                    Id =ci.User.Id,
+                  AccountTypeId = ci.User.AccountTypeId,
+
+                    FullName = ci.User.FullName,
+
+                    Email = ci.User.Email,
+
+                  //  Password = "",
+
+                    GoogleId = ci.User.GoogleId,
+                    Picture = ci.User.Picture,
+
+                    IsActive = ci.User.IsActive,
+
+                    CreatedAt = ci.User.CreatedAt,
+
+                    UpdatedAt = ci.User.UpdatedAt,
+
+                },
+                ProductEmpaque = new ProductoEmpaqueDto
+                {
+                    Id = ci.ProductEmpaque.Id,
+                    ProductoId = ci.ProductEmpaque.ProductoId,
+                    EmpaqueId = ci.ProductEmpaque.EmpaqueId,
+                    Codigo = ci.ProductEmpaque.Codigo,
+                    PCompra = ci.ProductEmpaque.PCompra,
+                    PVenta = ci.ProductEmpaque.PVenta,
+                    Descuento = (float?)ci.ProductEmpaque.Descuento,
+                    Activo = ci.ProductEmpaque.Activo,
+                    ImagenProducto = null,
+                    Empaque = 
+                    new EmpaqueDto
+                    {
+                        Id = ci.ProductEmpaque.Empaque.Id,
+                        Empaque = ci.ProductEmpaque.Empaque.Empaque,
+                        Contenido = ci.ProductEmpaque.Empaque.Contenido,
+                        Sincronizado = ci.ProductEmpaque.Empaque.Sincronizado,
+                        CodigoEmpaque = ci.ProductEmpaque.Empaque.CodigoEmpaque,
+                        FechaCreado = ci.ProductEmpaque.Empaque.FechaCreado,
+                        UnidadSat = null
+
+
+                    },
+                    Producto = new ProductoDto
+                    {
+                        Id = ci.ProductEmpaque.Producto.Id,
+                        ProductoSatId = ci.ProductEmpaque.Producto.ProductoSatId,
+                        Prefijo = ci.ProductEmpaque.Producto.Prefijo,
+                        NombreProducto = ci.ProductEmpaque.Producto.NombreProducto,
+                        Slug = ci.ProductEmpaque.Producto.Slug,
+                        Rating = ci.ProductEmpaque.Producto.Rating,
+                        Acumulador = ci.ProductEmpaque.Producto.Acumulador,
+                        ProductoIdAcumulador = ci.ProductEmpaque.Producto.ProductoIdAcumulador,
+                        Linea = new LineaDto { 
+                            Id= (int)ci.ProductEmpaque.Producto.LineaId,
+                            Linea= ci.ProductEmpaque.Producto.Linea.Linea,
+                            Slug = ci.ProductEmpaque.Producto.Linea.Slug,
+                             FechaCreado = ci.ProductEmpaque.Producto.CreatedAt,
+                             
+                        },
+                        MarcaProducto = new MarcaProductoDto { 
+                            Id= ci.ProductEmpaque.Producto.MarcaProducto.Id,
+                            Marca= ci.ProductEmpaque.Producto.MarcaProducto.Marca,
+                            Slug = ci.ProductEmpaque.Producto.MarcaProducto.Slug
+                        },
+                        //,
+                        //LineaId = ci.ProductEmpaque.Producto.LineaId,
+                        //MarcaId = ci.ProductEmpaque.Producto.MarcaId,
+
+                    }
+                }
+            })
+            .ToListAsync();
+
+            return   items ;
         }
 
         public async Task<bool> RemoveItemAsync(int userId, int productId)
