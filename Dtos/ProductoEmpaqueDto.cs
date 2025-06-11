@@ -1,4 +1,6 @@
-﻿namespace Api_comerce.Dtos
+﻿using Api_comerce.Models;
+
+namespace Api_comerce.Dtos
 {
     public class ProductoEmpaqueDto
     {
@@ -10,5 +12,12 @@
         public decimal? PVenta { get; set; }
         public float? Descuento { get; set; }
         public bool? Activo { get; set; }
+
+
+        public  ProductoDto Producto { get; set; }
+
+        public  EmpaqueDto? Empaque { get; set; }
+
+        public ICollection<ImagenProducto> ImagenProducto { get; set; }
     }
 }
