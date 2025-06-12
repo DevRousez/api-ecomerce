@@ -52,12 +52,17 @@ namespace Api_comerce.Controllers
             return Ok(producto);
         }
         [HttpGet("product-categories")]
-        public async Task<ActionResult<IEnumerable<catLineaDTO>>> GetCategories(int catedoriaID,string slug )
+        public async Task<ActionResult<IEnumerable<catLineaDTO>>> GetCategories(int catedoriaID=0,string slug = "null" )
         {
             var categories = await _productsService.GetProductsCategories(catedoriaID, slug);
             return Ok(categories);
         }
-
+        [HttpGet("products-categories")]
+        public async Task<ActionResult<IEnumerable<LineaDto>>> GetProductosCategories(int catedoriaID = 0, string slug = "null")
+        {
+            var categories = await _productsService.GetProductsCategories(catedoriaID, slug);
+            return Ok(categories);
+        }
         [HttpGet("name_contains")]
         public async Task<ActionResult<IEnumerable<ProductoEcommerceDto>>> GetProductosNameContainsAsync( string? name_contains = null)
         {

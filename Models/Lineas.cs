@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using Api_comerce.Dtos;
 
 namespace Api_comerce.Models
 {
@@ -13,7 +14,7 @@ namespace Api_comerce.Models
         public string? Linea { get; set; }
         public string? Slug { get; set; }
         public DateTime? FechaCreado { get; set; }
+        public List<ProductoDto> Productos { get; set; } = new();
 
-     
     }
 }
