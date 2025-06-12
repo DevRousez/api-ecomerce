@@ -23,7 +23,7 @@ namespace Api_comerce.Dtos
         public UnidadSatDto? UnidadSat { get; set; }
         public string DescripcionProdSat { get; set; }
 
-        public List<EmpaqueDto> Empaques { get; set; }
+        public List<ProductoEmpaqueDto> productoEmpaques { get; set; }
     }
 
     

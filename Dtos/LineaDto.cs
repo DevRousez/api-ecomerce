@@ -6,6 +6,8 @@
         public string? Linea { get; set; }
         public string? Slug { get; set; }
         public DateTime? FechaCreado { get; set; }
+
+        public List<ProductoDto> Productos { get; set; } = new();
     }
     
 }

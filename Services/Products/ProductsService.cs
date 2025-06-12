@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Http;
 using System.Linq;
 using Api_comerce.Models;
 using System;
+using System.ComponentModel.DataAnnotations;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 
 namespace Api_comerce.Services.Products
@@ -190,7 +192,7 @@ namespace Api_comerce.Services.Products
                 .ThenInclude(p => p.MarcaProducto)
             .Include(pe => pe.Empaque)
                 .ThenInclude(e => e.UnidadSAT)
-     .Where(p => p.ProductoId == id)
+     .Where(p => p.Id == id)
      .Select(p => new ProductoEcommerceDto
      {
          Id = p.Id,
@@ -477,10 +479,95 @@ namespace Api_comerce.Services.Products
 
             return productos;
         }
-        public async Task<List<catLineaDTO>> GetProductsCategories(int categoryId, string slug  )
+
+        public async Task<List<LineaDto>>GetProductosCategories(int categoriaId=0,string slug = "null")
+        {
+
+            var itemsQuery =  _context.Lineas.AsQueryable();  
+
+            if (categoriaId != 0)
+            {
+                itemsQuery = itemsQuery.Where(ci => ci.Id == categoriaId);
+            }
+
+            if (!string.IsNullOrEmpty(slug) && slug != "null")
+            {
+                itemsQuery = itemsQuery.Where(ci => ci.Slug.Contains(slug));
+            }
+
+
+            var items = await  itemsQuery
+           .Where(ci => ci.Id == categoriaId)
+           .Select(ci => new LineaDto
+           {
+               Id = ci.Id,
+               Linea = ci.Linea,
+               Slug = ci.Slug,
+               FechaCreado = ci.FechaCreado,
+               
+               Productos = ci.Productos.Select(p => new ProductoDto 
+               {
+
+                   Id = p.Id,
+                    ProductoSatId = p.ProductoSatId,
+                    Prefijo = p.Prefijo,
+                    NombreProducto = p.NombreProducto,
+                    Descripcion =p.Descripcion,
+                    DescripcionBreve =p.DescripcionBreve  ,
+                    Slug = p.Slug,
+                    Rating =p.Rating,
+                    Acumulador =p.Acumulador,
+                    ProductoIdAcumulador =p.ProductoIdAcumulador    ,
+                    Linea = new LineaDto
+                    {
+                        Id = ci.Id,
+                        Linea = ci.Linea,
+                        Slug = ci.Slug,
+                        FechaCreado = ci.FechaCreado,
+
+                    },
+                    MarcaProducto = new MarcaProductoDto
+                    {
+                        Id = p.MarcaProducto.Id,
+                         Marca = p.MarcaProducto.Marca,
+                        Slug = p.MarcaProducto.Slug,
+                       
+                    },
+                    ProductoSat  =  new ProductoSatDto
+                    {
+                        
+                    },
+                    UnidadSat = new UnidadSatDto { },
+                    DescripcionProdSat ="",
+                   productoEmpaques = p.productoEmpaques.Select(pe => new ProductoEmpaqueDto
+                     {
+
+
+                        Id =pe.Id,
+                        ProductoId = pe.ProductoId,
+                        EmpaqueId = pe.EmpaqueId,
+                        Codigo =pe.Codigo,
+                        PCompra =pe.PCompra,
+                        PVenta =pe.PVenta,
+                        Descuento =pe.Descuento,
+                        Activo =pe.Activo,
+
+                   }).ToList(),
+               }).ToList()
+
+
+           })
+           .ToListAsync();
+
+            return items;
+
+        }
+        public async Task<List<catLineaDTO>> GetProductsCategories(int categoryId = 0, string slug = "null")
         {
 
             string baseUrl = "";
+
+
 
             var resultadoPlano = await _context.Set<ProductoPlano>()
             .FromSqlInterpolated($"EXEC spCategorias_productosGet @categoria_id={categoryId}, @categoria_like={slug}")

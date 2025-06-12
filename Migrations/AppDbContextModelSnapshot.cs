@@ -324,71 +324,40 @@ namespace Api_comerce.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AlternativeText")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Caption")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("EmpaqueId")
+                    b.Property<int?>("Height")
                         .HasColumnType("int");
 
-                    b.Property<string>("Ext")
+                    b.Property<string>("Label")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Hash")
+                    b.Property<string>("MimeType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Height")
+                    b.Property<int>("ProductEmpaqueId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Mime")
+                    b.Property<decimal?>("SizeMb")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Type")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PreviewUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ProductoId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductosEmpaqueId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Provider")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ProviderMetadata")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("Size")
-                        .HasColumnType("float");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Url")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Width")
+                    b.Property<int?>("Width")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductosEmpaqueId");
+                    b.HasIndex("ProductEmpaqueId");
 
                     b.ToTable("ImagenProducto");
                 });
@@ -602,7 +571,7 @@ namespace Api_comerce.Migrations
 
             modelBuilder.Entity("Api_comerce.Models.CartItem", b =>
                 {
-                    b.HasOne("Api_comerce.Models.ProductosEmpaque", "Product")
+                    b.HasOne("Api_comerce.Models.ProductosEmpaque", "ProductEmpaque")
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -614,7 +583,7 @@ namespace Api_comerce.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Product");
+                    b.Navigation("ProductEmpaque");
 
                     b.Navigation("User");
                 });
@@ -630,13 +599,13 @@ namespace Api_comerce.Migrations
 
             modelBuilder.Entity("Api_comerce.Models.ImagenProducto", b =>
                 {
-                    b.HasOne("Api_comerce.Models.ProductosEmpaque", "ProductosEmpaque")
+                    b.HasOne("Api_comerce.Models.ProductosEmpaque", "ProductEmpaque")
                         .WithMany("ImagenProducto")
-                        .HasForeignKey("ProductosEmpaqueId")
+                        .HasForeignKey("ProductEmpaqueId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ProductosEmpaque");
+                    b.Navigation("ProductEmpaque");
                 });
 
             modelBuilder.Entity("Api_comerce.Models.Productos", b =>
