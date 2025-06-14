@@ -76,6 +76,32 @@ namespace Api_comerce.Controllers
             await _cartService.ClearCartAsync(userId);
             return Ok(new { success = true, message = "Cart cleared" });
         }
+
+        [HttpPost("checkout")]
+        public async Task<IActionResult> FinalizeOrderAsync()
+        {
+            int userId = GetUserId();  
+
+            try
+            {
+                var orden = await _cartService.FinalizeOrderAsync(userId, "Simulado");
+                return Ok(new
+                {
+                    success = true,
+                    orderId = orden.Id,
+                    total = orden.Total,
+                    message = "Compra realizada exitosamente"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = ex.Message
+                });
+            }
+        }
     }
 
 }

@@ -24,4 +24,29 @@ namespace Api_comerce.Dtos
         public AccountsDtocs? User { get; set; }
         public ProductoEmpaqueDto? ProductEmpaque { get; set; }
     }
+
+    public class CartItemResultDto
+    {
+        public int ProductId { get; set; }
+        public int Quantity { get; set; }
+        public decimal Price { get; set; }
+
+        public ProductEmpaqueDto ProductEmpaque { get; set; }
+    }
+
+    public class ProductEmpaqueDto
+    {
+        public int Id { get; set; }
+        public string Codigo { get; set; }
+        public decimal PVenta { get; set; }
+
+        public List<ImagenProductoDto> ImagenProducto { get; set; }
+    }
+
+    public class ImagenProductoDto
+    {
+        public string Url { get; set; }
+        public string Type { get; set; }
+        public string Label { get; set; }
+    }
 }

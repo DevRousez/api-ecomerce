@@ -20,9 +20,10 @@ namespace Api_comerce.Data
         public DbSet<ImagenProducto> ImagenProducto { get; set; }
         public DbSet<ProductoPlano> ProductoPlano { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
 
 
-        
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

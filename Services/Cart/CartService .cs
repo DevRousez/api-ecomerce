@@ -14,13 +14,14 @@ namespace Api_comerce.Services.Cart
             _context = context;
         }
 
-        public async Task<List<CartItem>> AddItemsToCartAsync(int userId, List<CartItemDto> items)
+        public async Task<List<CartItemResultDto>> AddItemsToCartAsync(int userId, List<CartItemDto> items)
         {
-            if (items == null || !items.Any()) return new List<CartItem>();
+            if (items == null || !items.Any()) return new List<CartItemResultDto>();
 
             var productIds = items.Select(i => i.ProductId).ToList();
 
             var products = await _context.ProductosEmpaque
+                .Include(p => p.ImagenProducto)
                 .Where(p => productIds.Contains(p.Id))
                 .ToDictionaryAsync(p => p.Id);
 
@@ -34,7 +35,7 @@ namespace Api_comerce.Services.Cart
             foreach (var item in items)
             {
                 if (!products.TryGetValue(item.ProductId, out var product))
-                    continue; // ignorar productos inválidos
+                    continue;
 
                 if (existingCartItems.TryGetValue(item.ProductId, out var existing))
                 {
@@ -49,9 +50,10 @@ namespace Api_comerce.Services.Cart
                         UserId = userId,
                         ProductId = item.ProductId,
                         Quantity = item.Quantity,
-                        Price = (decimal)product.PVenta, 
+                        Price = (decimal)product.PVenta,
                         CreatedAt = now,
-                        UpdatedAt = now
+                        UpdatedAt = now,
+                        ProductEmpaque = product
                     };
 
                     _context.CartItems.Add(newItem);
@@ -60,7 +62,28 @@ namespace Api_comerce.Services.Cart
             }
 
             await _context.SaveChangesAsync();
-            return result;
+
+            // Convertir a DTOs
+            var resultDto = result.Select(ci => new CartItemResultDto
+            {
+                ProductId = ci.ProductId,
+                Quantity = ci.Quantity,
+                Price = ci.Price,
+                ProductEmpaque = new ProductEmpaqueDto
+                {
+                    Id = ci.ProductEmpaque.Id,
+                    Codigo = ci.ProductEmpaque.Codigo,
+                    PVenta = (decimal)ci.ProductEmpaque.PVenta,
+                    ImagenProducto = ci.ProductEmpaque.ImagenProducto?.Select(img => new ImagenProductoDto
+                    {
+                        Url = img.Url,
+                        Type = img.Type,
+                        Label = img.Label
+                    }).ToList()
+                }
+            }).ToList();
+
+            return resultDto;
         }
 
         public async Task<List<CartItemDto>> GetCartAsync(int userId)
@@ -177,5 +200,59 @@ namespace Api_comerce.Services.Cart
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<Order> FinalizeOrderAsync(int userId, string metodoPago = "Simulado")
+        {
+            var cartItems = await _context.CartItems
+                .Where(c => c.UserId == userId)
+                .ToListAsync();
+
+            if (!cartItems.Any())
+                throw new InvalidOperationException("El carrito está vacío.");
+
+            var now = DateTime.UtcNow;
+            var total = cartItems.Sum(c => c.Quantity * c.Price);
+
+            var order = new Order
+            {
+                UserId = userId,
+                Total = total,
+                CreatedAt = now,
+                UpdatedAt = now,
+                Status = "Procesando",               // estado general de la orden
+                PaymentMethod = metodoPago,             // nuevo campo
+                PaymentStatus = "Paid",              // lo marcamos como pagado desde el inicio (simulado)
+                PaidAt = now,                       
+                PaymentReference = $"SIM-{Guid.NewGuid().ToString().Substring(0, 8)}" // ref xxxixixixixixos
+            };
+
+            _context.Orders.Add(order);
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                var innerMessage = ex.InnerException?.Message;
+                throw new Exception("Error al guardar la orden: " + innerMessage, ex);
+            }
+
+            var orderItems = cartItems.Select(c => new OrderItem
+            {
+                OrderId = order.Id,
+                ProductEmpaqueId = c.ProductId,
+                Quantity = c.Quantity,
+                UnitPrice = c.Price
+            }).ToList();
+
+            _context.OrderItems.AddRange(orderItems);
+
+            _context.CartItems.RemoveRange(cartItems); // limpiar carrito
+
+            await _context.SaveChangesAsync();
+
+            return order;
+        }
+
     }
 }
