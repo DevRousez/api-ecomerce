@@ -18,6 +18,6 @@ namespace Api_comerce.Dtos
 
         public  EmpaqueDto? Empaque { get; set; }
 
-        public ICollection<ImagenProducto> ImagenProducto { get; set; }
+        public List<ImageDto> ImagenProducto { get; set; } = new List<ImageDto>();
     }
 }

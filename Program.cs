@@ -12,6 +12,7 @@ using Api_comerce.Services.JWTService;
 using Api_comerce.Services.Cart;
 using Microsoft.OpenApi.Models;
 using Api_comerce.Services.Checkout;
+using Api_comerce.Services.Wishlists;
 
 
 
@@ -32,6 +33,7 @@ builder.Services.AddScoped<ILineasService, LineasService>();
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<ICheckoutService, CheckoutService>();
+builder.Services.AddScoped<IWishlistService, WishlistService>();
 
 
 builder.Services.AddCors(options =>
