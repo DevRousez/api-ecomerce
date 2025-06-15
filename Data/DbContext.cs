@@ -22,7 +22,8 @@ namespace Api_comerce.Data
         public DbSet<CartItem> CartItems { get; set; }
         public DbSet<Orden> Orden { get; set; }
         public DbSet<OrdenDetalle> OrdenDetalle { get; set; }
-
+        public DbSet<Wishlist> Wishlists { get; set; }
+        public DbSet<WishlistItem> WishlistItems { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -81,16 +82,17 @@ namespace Api_comerce.Data
                 .WithMany()
                 .HasForeignKey(ci => ci.ProductId);
 
-            //modelBuilder.Entity<ImagenProducto>()
-            //.HasOne(ip => ip.ProductosEmpaque)
-            //.WithMany(pe => pe.Imagenes)
-            //.HasForeignKey(ip => new { ip.ProductoId, ip.EmpaqueId });
 
 
-            //modelBuilder.Entity<Productos>().Ignore(p => p.CreatedAt);
-            //modelBuilder.Entity<Productos>().Ignore(p => p.UpdatedAt);
-            //modelBuilder.Entity<Productos>().Ignore(p => p.UnidadSAT);
-            //modelBuilder.Entity<Empaques>().Ignore(p => p.UnidadId);
+            modelBuilder.Entity<WishlistItem>()
+            .HasOne(w => w.Wishlist)
+            .WithMany(w => w.WishlistItems)
+            .HasForeignKey(w => w.WishlistId);
+
+            modelBuilder.Entity<WishlistItem>()
+                .HasOne(wi => wi.ProductosEmpaque)
+                .WithMany() 
+                .HasForeignKey(wi => wi.ProductId);
 
         }
 

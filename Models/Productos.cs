@@ -43,7 +43,6 @@ namespace Api_comerce.Models
 
 
         public virtual ICollection<ProductosEmpaque>? ProductosEmpaque { get; set; }
-
-      
+        
     }
 }

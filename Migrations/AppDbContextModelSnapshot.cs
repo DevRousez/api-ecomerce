@@ -628,6 +628,54 @@ namespace Api_comerce.Migrations
                     b.ToTable("UnidadesSat");
                 });
 
+            modelBuilder.Entity("Api_comerce.Models.Wishlist", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Wishlists");
+                });
+
+            modelBuilder.Entity("Api_comerce.Models.WishlistItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WishlistId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("WishlistId");
+
+                    b.ToTable("WishlistItems");
+                });
+
             modelBuilder.Entity("Api_comerce.Models.Accounts", b =>
                 {
                     b.HasOne("Api_comerce.Models.AccountsTypes", "AccountsTypes")
@@ -729,6 +777,25 @@ namespace Api_comerce.Migrations
                     b.Navigation("Producto");
                 });
 
+            modelBuilder.Entity("Api_comerce.Models.WishlistItem", b =>
+                {
+                    b.HasOne("Api_comerce.Models.ProductosEmpaque", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Api_comerce.Models.Wishlist", "Wishlist")
+                        .WithMany("WishlistItems")
+                        .HasForeignKey("WishlistId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Wishlist");
+                });
+
             modelBuilder.Entity("Api_comerce.Models.Accounts", b =>
                 {
                     b.Navigation("CartItems");
@@ -757,6 +824,11 @@ namespace Api_comerce.Migrations
             modelBuilder.Entity("Api_comerce.Models.ProductosEmpaque", b =>
                 {
                     b.Navigation("ImagenProducto");
+                });
+
+            modelBuilder.Entity("Api_comerce.Models.Wishlist", b =>
+                {
+                    b.Navigation("WishlistItems");
                 });
 #pragma warning restore 612, 618
         }
