@@ -344,57 +344,19 @@ namespace Api_comerce.Services.Products
                 }
                     }
                     : defaultBadges,
+                Images = p.ImagenProducto.Any() == true
+                        ? p.ImagenProducto.Select(img => new ImageDto
+                        {
+                            Name = System.IO.Path.GetFileName(img.Url),
+                            Url = img.Url,
+                            Width = (int)img.Width,
+                            Height = (int)img.Height,
+                            Formats = new FormatDto()
+                        }).ToList()
+                        : new List<ImageDto>(),
+                Thumbnail = MapImage(p.ImagenProducto.ToList(), "front"),
+                ThumbnailBack = MapImage(p.ImagenProducto.ToList(), "back"),
 
-                Images = new List<ImageDto>
-        {
-            new ImageDto
-            {
-                Id = 0,
-                Name = "Sayer-Generic.jpg",
-                Width = 800,
-                Height = 800,
-                Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg",
-                Formats = new FormatDto
-                {
-                    Thumbnail = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 156, Height = 156 },
-                    Small = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 500, Height = 500 },
-                    Medium = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 750, Height = 750 },
-                    Large = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 1000, Height = 1000 }
-                }
-            }
-        },
-
-                Thumbnail = new ImageDto
-                {
-                    Id = 0,
-                    Name = "Sayer-Generic.jpg",
-                    Width = 100,
-                    Height = 80,
-                    Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg",
-                    Formats = new FormatDto
-                    {
-                        Thumbnail = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 156, Height = 156 },
-                        Small = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 500, Height = 500 },
-                        Medium = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 750, Height = 750 },
-                        Large = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 1000, Height = 1000 }
-                    }
-                },
-
-                ThumbnailBack = new ImageDto
-                {
-                    Id = 1,
-                    Name = "Sayer-Generic.jpg",
-                    Width = 400,
-                    Height = 270,
-                    Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg",
-                    Formats = new FormatDto
-                    {
-                        Thumbnail = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 156, Height = 156 },
-                        Small = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 500, Height = 500 },
-                        Medium = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 750, Height = 750 },
-                        Large = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 1000, Height = 1000 }
-                    }
-                },
 
                 ProductCategories = p.Producto.Linea != null
                     ? new List<LineaDto>
@@ -428,85 +390,83 @@ namespace Api_comerce.Services.Products
         public async Task<List<LineaDto>>GetProductosCategories(int categoriaId=0,string slug = "null")
         {
 
-            var itemsQuery =  _context.Lineas.AsQueryable();  
+            var query =  _context.Lineas
+    .Include(ci => ci.Productos)
+        .ThenInclude(p => p.MarcaProducto)
+    .Include(ci => ci.Productos)
+        .ThenInclude(p => p.ProductosEmpaque)
+        .AsQueryable();
+           
 
             if (categoriaId != 0)
             {
-                itemsQuery = itemsQuery.Where(ci => ci.Id == categoriaId);
+                query = query.Where(ci => ci.Id == categoriaId);
             }
 
-            if (!string.IsNullOrEmpty(slug) && slug != "null")
+            if (!string.IsNullOrWhiteSpace(slug) && slug != "null")
             {
-                itemsQuery = itemsQuery.Where(ci => ci.Slug.Contains(slug));
+                query = query.Where(ci => ci.Slug.Contains(slug));
             }
 
+            var lineas = await query.ToListAsync();
 
-            var items = await  itemsQuery
-           .Where(ci => ci.Id == categoriaId)
-           .Select(ci => new LineaDto
-           {
-               Id = ci.Id,
-               Linea = ci.Linea,
-               Slug = ci.Slug,
-               FechaCreado = ci.FechaCreado,
-               
-               Productos = ci.Productos.Select(p => new ProductoDto 
-               {
-
-                   Id = p.Id,
+            var items = lineas.Select(ci => new LineaDto
+            {
+                Id = ci.Id,
+                Linea = ci.Linea,
+                Slug = ci.Slug,
+                FechaCreado = ci.FechaCreado,
+                Productos = ci.Productos.Select(p => new ProductoDto
+                {
+                    Id = p.Id,
                     ProductoSatId = p.ProductoSatId,
                     Prefijo = p.Prefijo,
                     NombreProducto = p.NombreProducto,
-                    Descripcion =p.Descripcion,
-                    DescripcionBreve =p.DescripcionBreve  ,
+                    Descripcion = p.Descripcion,
+                    DescripcionBreve = p.DescripcionBreve,
                     Slug = p.Slug,
-                    Rating =p.Rating,
-                    Acumulador =p.Acumulador,
-                    ProductoIdAcumulador =p.ProductoIdAcumulador    ,
+                    Rating = p.Rating,
+                    Acumulador = p.Acumulador,
+                    ProductoIdAcumulador = p.ProductoIdAcumulador,
                     Linea = new LineaDto
                     {
                         Id = ci.Id,
                         Linea = ci.Linea,
                         Slug = ci.Slug,
                         FechaCreado = ci.FechaCreado,
-
                     },
-                    MarcaProducto = new MarcaProductoDto
+                    MarcaProducto = p.MarcaProducto == null ? new MarcaProductoDto
+                    {
+                        Id = 0,
+                        Marca = "NO DATO",
+                        Slug = "no-dato"
+                    } : new MarcaProductoDto
                     {
                         Id = p.MarcaProducto.Id,
-                         Marca = p.MarcaProducto.Marca,
+                        Marca = p.MarcaProducto.Marca,
                         Slug = p.MarcaProducto.Slug,
-                       
                     },
-                    ProductoSat  =  new ProductoSatDto
-                    {
-                        
-                    },
+                    ProductoSat = new ProductoSatDto { },
                     UnidadSat = new UnidadSatDto { },
-                    DescripcionProdSat ="",
-                   productoEmpaques = p.productoEmpaques.Select(pe => new ProductoEmpaqueDto
-                     {
-
-
-                        Id =pe.Id,
+                    DescripcionProdSat = "",
+                    productoEmpaques = p.ProductosEmpaque?.Select(pe => new ProductoEmpaqueDto
+                    {
+                        Id = pe.Id,
                         ProductoId = pe.ProductoId,
                         EmpaqueId = pe.EmpaqueId,
-                        Codigo =pe.Codigo,
-                        PCompra =pe.PCompra,
-                        PVenta =pe.PVenta,
-                        Descuento =pe.Descuento,
-                        Activo =pe.Activo,
-
-                   }).ToList(),
-               }).ToList()
-
-
-           })
-           .ToListAsync();
-
+                        Codigo = pe.Codigo,
+                        PCompra = pe.PCompra,
+                        PVenta = pe.PVenta,
+                        Descuento = (float?)pe.Descuento,
+                        Activo = pe.Activo,
+                    }).ToList() ?? new List<ProductoEmpaqueDto>()
+                }).ToList()
+            }).ToList();
             return items;
 
         }
+
+        //no me gusto que tarda mucho xd 
         public async Task<List<catLineaDTO>> GetProductsCategories(int categoryId = 0, string slug = "null")
         {
 
@@ -664,56 +624,19 @@ namespace Api_comerce.Services.Products
                     }
                     : defaultBadges,
 
-                Images = new List<ImageDto>
-        {
-            new ImageDto
-            {
-                Id = 0,
-                Name = "Sayer-Generic.jpg",
-                Width = 800,
-                Height = 800,
-                Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg",
-                Formats = new FormatDto
-                {
-                    Thumbnail = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 156, Height = 156 },
-                    Small = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 500, Height = 500 },
-                    Medium = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 750, Height = 750 },
-                    Large = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 1000, Height = 1000 }
-                }
-            }
-        },
+                Images = p.ImagenProducto.Any() == true
+                        ? p.ImagenProducto.Select(img => new ImageDto
+                        {
+                            Name = System.IO.Path.GetFileName(img.Url),
+                            Url = img.Url,
+                            Width = (int)img.Width,
+                            Height = (int)img.Height,
+                            Formats = new FormatDto()
+                        }).ToList()
+                        : new List<ImageDto>(),
+                Thumbnail = MapImage(p.ImagenProducto.ToList(), "front"),
+                ThumbnailBack = MapImage(p.ImagenProducto.ToList(), "back"),
 
-                Thumbnail = new ImageDto
-                {
-                    Id = 0,
-                    Name = "Sayer-Generic.jpg",
-                    Width = 100,
-                    Height = 80,
-                    Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg",
-                    Formats = new FormatDto
-                    {
-                        Thumbnail = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 156, Height = 156 },
-                        Small = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 500, Height = 500 },
-                        Medium = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 750, Height = 750 },
-                        Large = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 1000, Height = 1000 }
-                    }
-                },
-
-                ThumbnailBack = new ImageDto
-                {
-                    Id = 1,
-                    Name = "Sayer-Generic.jpg",
-                    Width = 400,
-                    Height = 270,
-                    Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg",
-                    Formats = new FormatDto
-                    {
-                        Thumbnail = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 156, Height = 156 },
-                        Small = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 500, Height = 500 },
-                        Medium = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 750, Height = 750 },
-                        Large = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 1000, Height = 1000 }
-                    }
-                },
 
                 ProductCategories = p.Producto.Linea != null
                     ? new List<LineaDto>

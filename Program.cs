@@ -11,6 +11,7 @@ using System.Text;
 using Api_comerce.Services.JWTService;
 using Api_comerce.Services.Cart;
 using Microsoft.OpenApi.Models;
+using Api_comerce.Services.Checkout;
 
 
 
@@ -30,7 +31,7 @@ builder.Services.AddScoped<IProductsService, ProductsService>();
 builder.Services.AddScoped<ILineasService, LineasService>();
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<ICartService, CartService>();
-
+builder.Services.AddScoped<ICheckoutService, CheckoutService>();
 
 
 builder.Services.AddCors(options =>

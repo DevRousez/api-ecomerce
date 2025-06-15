@@ -14,7 +14,7 @@ namespace Api_comerce.Models
         public string? Linea { get; set; }
         public string? Slug { get; set; }
         public DateTime? FechaCreado { get; set; }
-        public List<ProductoDto> Productos { get; set; } = new();
+        public List<Productos> Productos { get; set; } = new();
 
     }
 }

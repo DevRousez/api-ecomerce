@@ -22,209 +22,6 @@ namespace Api_comerce.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Api_comerce.Dtos.EmpaqueDto", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<bool?>("Activo")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Codigo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CodigoEmpaque")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double?>("Contenido")
-                        .HasColumnType("float");
-
-                    b.Property<double?>("Descuento")
-                        .HasColumnType("float");
-
-                    b.Property<string>("Empaque")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("FechaCreado")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal?>("PCompra")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("PVenta")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<bool?>("Sincronizado")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("UnidadSatId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UnidadSatId");
-
-                    b.ToTable("EmpaqueDto");
-                });
-
-            modelBuilder.Entity("Api_comerce.Dtos.LineaDto", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime?>("FechaCreado")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Linea")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Slug")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("LineaDto");
-                });
-
-            modelBuilder.Entity("Api_comerce.Dtos.MarcaProductoDto", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Marca")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Slug")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("MarcaProductoDto");
-                });
-
-            modelBuilder.Entity("Api_comerce.Dtos.ProductoDto", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<bool?>("Acumulador")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Descripcion")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DescripcionBreve")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DescripcionProdSat")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("LineaId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("LineasId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("MarcaProductoId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("NombreProducto")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Prefijo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("ProductoIdAcumulador")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ProductoSatId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("Rating")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Slug")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("UnidadSatId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LineaId");
-
-                    b.HasIndex("LineasId");
-
-                    b.HasIndex("MarcaProductoId");
-
-                    b.HasIndex("ProductoSatId");
-
-                    b.HasIndex("UnidadSatId");
-
-                    b.ToTable("ProductoDto");
-                });
-
-            modelBuilder.Entity("Api_comerce.Dtos.ProductoEmpaqueDto", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<bool?>("Activo")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Codigo")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<float?>("Descuento")
-                        .HasColumnType("real");
-
-                    b.Property<int>("EmpaqueId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal?>("PCompra")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("PVenta")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("ProductoId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EmpaqueId");
-
-                    b.HasIndex("ProductoId");
-
-                    b.ToTable("ProductoEmpaqueDto");
-                });
-
             modelBuilder.Entity("Api_comerce.Dtos.ProductoPlano", b =>
                 {
                     b.Property<bool?>("ActivoPE")
@@ -348,54 +145,6 @@ namespace Api_comerce.Migrations
                     b.ToTable("ProductoPlano");
                 });
 
-            modelBuilder.Entity("Api_comerce.Dtos.ProductoSatDto", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ClaveProd")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Descripcion")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("FechaCreado")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ProductoSatDto");
-                });
-
-            modelBuilder.Entity("Api_comerce.Dtos.UnidadSatDto", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ClaveUnidad")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("FechaCreado")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UnidadSat")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("UnidadSatDto");
-                });
-
             modelBuilder.Entity("Api_comerce.Models.Accounts", b =>
                 {
                     b.Property<int>("Id")
@@ -517,6 +266,9 @@ namespace Api_comerce.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("Subtotalproduc")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -592,9 +344,6 @@ namespace Api_comerce.Migrations
                     b.Property<int>("ProductEmpaqueId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ProductoEmpaqueDtoId")
-                        .HasColumnType("int");
-
                     b.Property<decimal?>("SizeMb")
                         .HasColumnType("decimal(18,2)");
 
@@ -612,8 +361,6 @@ namespace Api_comerce.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ProductEmpaqueId");
-
-                    b.HasIndex("ProductoEmpaqueDtoId");
 
                     b.ToTable("ImagenProducto");
                 });
@@ -664,7 +411,7 @@ namespace Api_comerce.Migrations
                     b.ToTable("MarcasProducto");
                 });
 
-            modelBuilder.Entity("Api_comerce.Models.Order", b =>
+            modelBuilder.Entity("Api_comerce.Models.Orden", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -672,51 +419,39 @@ namespace Api_comerce.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<string>("Correo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Direccion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("FechaCreacion")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("PaidAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("PaymentMethod")
+                    b.Property<string>("MetodoPago")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PaymentReference")
+                    b.Property<string>("NombreCompleto")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PaymentStatus")
+                    b.Property<string>("Telefono")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Subtotal")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Tax")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Total")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Orders");
+                    b.ToTable("Orden");
                 });
 
-            modelBuilder.Entity("Api_comerce.Models.OrderItem", b =>
+            modelBuilder.Entity("Api_comerce.Models.OrdenDetalle", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -724,28 +459,23 @@ namespace Api_comerce.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("OrderId")
+                    b.Property<int>("Cantidad")
                         .HasColumnType("int");
 
-                    b.Property<int>("ProductEmpaqueId")
+                    b.Property<int>("OrdenId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("UnitPrice")
+                    b.Property<decimal>("Precio")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("ProductoId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OrderId");
+                    b.HasIndex("OrdenId");
 
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("OrderItems");
+                    b.ToTable("OrdenDetalle");
                 });
 
             modelBuilder.Entity("Api_comerce.Models.ProductoSat", b =>
@@ -898,67 +628,6 @@ namespace Api_comerce.Migrations
                     b.ToTable("UnidadesSat");
                 });
 
-            modelBuilder.Entity("Api_comerce.Dtos.EmpaqueDto", b =>
-                {
-                    b.HasOne("Api_comerce.Dtos.UnidadSatDto", "UnidadSat")
-                        .WithMany()
-                        .HasForeignKey("UnidadSatId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("UnidadSat");
-                });
-
-            modelBuilder.Entity("Api_comerce.Dtos.ProductoDto", b =>
-                {
-                    b.HasOne("Api_comerce.Dtos.LineaDto", "Linea")
-                        .WithMany("Productos")
-                        .HasForeignKey("LineaId");
-
-                    b.HasOne("Api_comerce.Models.Lineas", null)
-                        .WithMany("Productos")
-                        .HasForeignKey("LineasId");
-
-                    b.HasOne("Api_comerce.Dtos.MarcaProductoDto", "MarcaProducto")
-                        .WithMany()
-                        .HasForeignKey("MarcaProductoId");
-
-                    b.HasOne("Api_comerce.Dtos.ProductoSatDto", "ProductoSat")
-                        .WithMany()
-                        .HasForeignKey("ProductoSatId");
-
-                    b.HasOne("Api_comerce.Dtos.UnidadSatDto", "UnidadSat")
-                        .WithMany()
-                        .HasForeignKey("UnidadSatId");
-
-                    b.Navigation("Linea");
-
-                    b.Navigation("MarcaProducto");
-
-                    b.Navigation("ProductoSat");
-
-                    b.Navigation("UnidadSat");
-                });
-
-            modelBuilder.Entity("Api_comerce.Dtos.ProductoEmpaqueDto", b =>
-                {
-                    b.HasOne("Api_comerce.Dtos.EmpaqueDto", "Empaque")
-                        .WithMany()
-                        .HasForeignKey("EmpaqueId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Api_comerce.Dtos.ProductoDto", "Producto")
-                        .WithMany("productoEmpaques")
-                        .HasForeignKey("ProductoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Empaque");
-
-                    b.Navigation("Producto");
-                });
-
             modelBuilder.Entity("Api_comerce.Models.Accounts", b =>
                 {
                     b.HasOne("Api_comerce.Models.AccountsTypes", "AccountsTypes")
@@ -1006,47 +675,24 @@ namespace Api_comerce.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Api_comerce.Dtos.ProductoEmpaqueDto", null)
-                        .WithMany("ImagenProducto")
-                        .HasForeignKey("ProductoEmpaqueDtoId");
-
                     b.Navigation("ProductEmpaque");
                 });
 
-            modelBuilder.Entity("Api_comerce.Models.Order", b =>
+            modelBuilder.Entity("Api_comerce.Models.OrdenDetalle", b =>
                 {
-                    b.HasOne("Api_comerce.Models.Accounts", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
+                    b.HasOne("Api_comerce.Models.Orden", "Orden")
+                        .WithMany("Detalles")
+                        .HasForeignKey("OrdenId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Api_comerce.Models.OrderItem", b =>
-                {
-                    b.HasOne("Api_comerce.Models.Order", "Order")
-                        .WithMany("Items")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Api_comerce.Models.ProductosEmpaque", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Order");
-
-                    b.Navigation("Product");
+                    b.Navigation("Orden");
                 });
 
             modelBuilder.Entity("Api_comerce.Models.Productos", b =>
                 {
                     b.HasOne("Api_comerce.Models.Lineas", "Linea")
-                        .WithMany()
+                        .WithMany("Productos")
                         .HasForeignKey("LineaId");
 
                     b.HasOne("Api_comerce.Models.MarcaProductos", "MarcaProducto")
@@ -1083,21 +729,6 @@ namespace Api_comerce.Migrations
                     b.Navigation("Producto");
                 });
 
-            modelBuilder.Entity("Api_comerce.Dtos.LineaDto", b =>
-                {
-                    b.Navigation("Productos");
-                });
-
-            modelBuilder.Entity("Api_comerce.Dtos.ProductoDto", b =>
-                {
-                    b.Navigation("productoEmpaques");
-                });
-
-            modelBuilder.Entity("Api_comerce.Dtos.ProductoEmpaqueDto", b =>
-                {
-                    b.Navigation("ImagenProducto");
-                });
-
             modelBuilder.Entity("Api_comerce.Models.Accounts", b =>
                 {
                     b.Navigation("CartItems");
@@ -1113,9 +744,9 @@ namespace Api_comerce.Migrations
                     b.Navigation("Productos");
                 });
 
-            modelBuilder.Entity("Api_comerce.Models.Order", b =>
+            modelBuilder.Entity("Api_comerce.Models.Orden", b =>
                 {
-                    b.Navigation("Items");
+                    b.Navigation("Detalles");
                 });
 
             modelBuilder.Entity("Api_comerce.Models.Productos", b =>

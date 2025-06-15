@@ -51,6 +51,7 @@ namespace Api_comerce.Services.Cart
                         ProductId = item.ProductId,
                         Quantity = item.Quantity,
                         Price = (decimal)product.PVenta,
+                        Subtotalproduc= (decimal)product.PVenta * item.Quantity,
                         CreatedAt = now,
                         UpdatedAt = now,
                         ProductEmpaque = product
@@ -199,60 +200,7 @@ namespace Api_comerce.Services.Cart
             _context.CartItems.RemoveRange(items);
             await _context.SaveChangesAsync();
             return true;
+
         }
-
-        public async Task<Order> FinalizeOrderAsync(int userId, string metodoPago = "Simulado")
-        {
-            var cartItems = await _context.CartItems
-                .Where(c => c.UserId == userId)
-                .ToListAsync();
-
-            if (!cartItems.Any())
-                throw new InvalidOperationException("El carrito está vacío.");
-
-            var now = DateTime.UtcNow;
-            var total = cartItems.Sum(c => c.Quantity * c.Price);
-
-            var order = new Order
-            {
-                UserId = userId,
-                Total = total,
-                CreatedAt = now,
-                UpdatedAt = now,
-                Status = "Procesando",               // estado general de la orden
-                PaymentMethod = metodoPago,             // nuevo campo
-                PaymentStatus = "Paid",              // lo marcamos como pagado desde el inicio (simulado)
-                PaidAt = now,                       
-                PaymentReference = $"SIM-{Guid.NewGuid().ToString().Substring(0, 8)}" // ref xxxixixixixixos
-            };
-
-            _context.Orders.Add(order);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException ex)
-            {
-                var innerMessage = ex.InnerException?.Message;
-                throw new Exception("Error al guardar la orden: " + innerMessage, ex);
-            }
-
-            var orderItems = cartItems.Select(c => new OrderItem
-            {
-                OrderId = order.Id,
-                ProductEmpaqueId = c.ProductId,
-                Quantity = c.Quantity,
-                UnitPrice = c.Price
-            }).ToList();
-
-            _context.OrderItems.AddRange(orderItems);
-
-            _context.CartItems.RemoveRange(cartItems); // limpiar carrito
-
-            await _context.SaveChangesAsync();
-
-            return order;
-        }
-
     }
 }

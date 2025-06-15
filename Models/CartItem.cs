@@ -9,6 +9,7 @@
 
         public int Quantity { get; set; }
         public decimal Price { get; set; } 
+        public virtual decimal Subtotalproduc { get; set; }
 
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
