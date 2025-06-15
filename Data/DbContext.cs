@@ -20,8 +20,8 @@ namespace Api_comerce.Data
         public DbSet<ImagenProducto> ImagenProducto { get; set; }
         public DbSet<ProductoPlano> ProductoPlano { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
-        public DbSet<Order> Orders { get; set; }
-        public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<Orden> Orden { get; set; }
+        public DbSet<OrdenDetalle> OrdenDetalle { get; set; }
 
 
 
@@ -47,9 +47,9 @@ namespace Api_comerce.Data
                 .HasForeignKey(p => p.ProductoSatId);
 
             modelBuilder.Entity<Productos>()
-                .HasOne(p => p.Linea)
-                .WithMany()
-                .HasForeignKey(p => p.LineaId);
+       .HasOne(p => p.Linea)
+       .WithMany(l => l.Productos)
+       .HasForeignKey(p => p.LineaId);
 
             modelBuilder.Entity<Productos>()
                 .HasOne(p => p.MarcaProducto)
