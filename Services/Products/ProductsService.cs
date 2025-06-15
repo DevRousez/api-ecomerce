@@ -34,15 +34,15 @@ namespace Api_comerce.Services.Products
     };
 
             var productosRaw = await _context.ProductosEmpaque
-           .Include(pe => pe.Producto)
-               .ThenInclude(p => p.Linea)
-           .Include(pe => pe.Producto)
-               .ThenInclude(p => p.MarcaProducto)
-           .Include(pe => pe.Empaque)
-               .ThenInclude(e => e.UnidadSAT)
-    //.Where(p => p.ProductoId == id)
-    //                   .Where(p => p.Id == 1254)
-                .ToListAsync();
+     .Include(pe => pe.Producto)
+         .ThenInclude(p => p.Linea)
+     .Include(pe => pe.Producto)
+         .ThenInclude(p => p.MarcaProducto)
+     .Include(pe => pe.Empaque)
+         .ThenInclude(e => e.UnidadSAT)
+     .Include(pe => pe.ImagenProducto) // <- esta línea es la clave nueva
+     .ToListAsync();
+              
 
             // SEGUNDA PARTE: Creamos los DTOs en memoria
             var productos = productosRaw.Select(p => new ProductoEcommerceDto
@@ -93,56 +93,19 @@ namespace Api_comerce.Services.Products
                     }
                     : defaultBadges,
 
-                Images = new List<ImageDto>
-        {
-            new ImageDto
-            {
-                Id = 0,
-                Name = "Sayer-Generic.jpg",
-                Width = 800,
-                Height = 800,
-                Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg",
-                Formats = new FormatDto
-                {
-                    Thumbnail = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 156, Height = 156 },
-                    Small = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 500, Height = 500 },
-                    Medium = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 750, Height = 750 },
-                    Large = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 1000, Height = 1000 }
-                }
-            }
-        },
+                Images = p.ImagenProducto?.Any() == true
+                        ? p.ImagenProducto.Select(img => new ImageDto
+                        {
+                            Name = System.IO.Path.GetFileName(img.Url),
+                            Url = img.Url,
+                            Width = (int)img.Width,
+                            Height = (int)img.Height,
+                            Formats = new FormatDto() 
+                        }).ToList()
+                        : new List<ImageDto>(),
 
-                Thumbnail = new ImageDto
-                {
-                    Id = 0,
-                    Name = "Sayer-Generic.jpg",
-                    Width = 100,
-                    Height = 80,
-                    Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg",
-                    Formats = new FormatDto
-                    {
-                        Thumbnail = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 156, Height = 156 },
-                        Small = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 500, Height = 500 },
-                        Medium = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 750, Height = 750 },
-                        Large = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 1000, Height = 1000 }
-                    }
-                },
-
-                ThumbnailBack = new ImageDto
-                {
-                    Id = 1,
-                    Name = "Sayer-Generic.jpg",
-                    Width = 400,
-                    Height = 270,
-                    Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg",
-                    Formats = new FormatDto
-                    {
-                        Thumbnail = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 156, Height = 156 },
-                        Small = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 500, Height = 500 },
-                        Medium = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 750, Height = 750 },
-                        Large = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 1000, Height = 1000 }
-                    }
-                },
+                Thumbnail = MapImage(p.ImagenProducto.ToList(), "front"),
+                ThumbnailBack = MapImage(p.ImagenProducto.ToList(), "back"),
 
                 ProductCategories = p.Producto.Linea != null
                     ? new List<LineaDto>
@@ -192,6 +155,7 @@ namespace Api_comerce.Services.Products
                 .ThenInclude(p => p.MarcaProducto)
             .Include(pe => pe.Empaque)
                 .ThenInclude(e => e.UnidadSAT)
+                 .Include(pe => pe.ImagenProducto)
      .Where(p => p.Id == id)
      .Select(p => new ProductoEcommerceDto
      {
@@ -253,37 +217,18 @@ namespace Api_comerce.Services.Products
              }
              : defaultBadges,
          // Aquí NO asignar Images todavía
-         Thumbnail = new ImageDto
-         {
-             Id = 0,
-             Name = "Sayer-Generic.jpg",
-             Width = 100,
-             Height = 80,
-             Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg",
-             Formats = new FormatDto
-             {
-                 Thumbnail = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 156, Height = 156 },
-                 Small = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 500, Height = 500 },
-                 Medium = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 750, Height = 750 },
-                 Large = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 1000, Height = 1000 }
-             }
-         },
-
-         ThumbnailBack = new ImageDto
-         {
-             Id = 1,
-             Name = "Sayer-Generic.jpg",
-             Width = 400,
-             Height = 270,
-             Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg",
-             Formats = new FormatDto
-             {
-                 Thumbnail = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 156, Height = 156 },
-                 Small = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 500, Height = 500 },
-                 Medium = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 750, Height = 750 },
-                 Large = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 1000, Height = 1000 }
-             }
-         },
+           Images = p.ImagenProducto.Any() == true
+                        ? p.ImagenProducto.Select(img => new ImageDto
+                        {
+                            Name = System.IO.Path.GetFileName(img.Url),
+                            Url = img.Url,
+                            Width = (int)img.Width,
+                            Height = (int)img.Height,
+                            Formats = new FormatDto()
+                        }).ToList()
+                        : new List<ImageDto>(),
+         Thumbnail = MapImage(p.ImagenProducto.ToList(), "front"),
+         ThumbnailBack = MapImage(p.ImagenProducto.ToList(), "back"),
 
          ProductCategories = p.Producto.Linea != null
              ? new List<LineaDto> {
@@ -298,27 +243,27 @@ namespace Api_comerce.Services.Products
      })
      .ToListAsync();
 
-            foreach (var producto in productoDto)
-            {
-                producto.Images = new List<ImageDto>
-                        {
-                            new ImageDto
-                            {
-                                Id = 0,
-                                Name = "Sayer-Generic.jpg",
-                                Width = 800,
-                                Height = 800,
-                                Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg",
-                                Formats = new FormatDto
-                                {
-                                    Thumbnail = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 156, Height = 156 },
-                                    Small = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 500, Height = 500 },
-                                    Medium = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 750, Height = 750 },
-                                    Large = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 1000, Height = 1000 }
-                                }
-                            }
-                         };
-            }
+            //foreach (var producto in productoDto)
+            //{
+            //    producto.Images = new List<ImageDto>
+            //            {
+            //                new ImageDto
+            //                {
+            //                    Id = 0,
+            //                    Name = "Sayer-Generic.jpg",
+            //                    Width = 800,
+            //                    Height = 800,
+            //                    Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg",
+            //                    Formats = new FormatDto
+            //                    {
+            //                        Thumbnail = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 156, Height = 156 },
+            //                        Small = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 500, Height = 500 },
+            //                        Medium = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 750, Height = 750 },
+            //                        Large = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 1000, Height = 1000 }
+            //                    }
+            //                }
+            //             };
+            //}
 
             return   productoDto;
   
@@ -810,14 +755,51 @@ namespace Api_comerce.Services.Products
                 }).ToList();
         }
 
-        private string GetBaseUrl()
+        private static ImageDto MapImage(List<ImagenProducto> imagenes, string label)
         {
-            var request = _httpContextAccessor.HttpContext?.Request;
+            var baseUrl = ""; // Defínelo si usas dominio
 
-            if (request == null)
-                return string.Empty;
+            var grouped = imagenes
+                .Where(img => img.Label == label)
+                .GroupBy(img => img.Type)
+                .ToDictionary(g => g.Key, g => g.FirstOrDefault());
 
-            return $"{request.Scheme}://{request.Host}";
+            return new ImageDto
+            {
+                Id = grouped["original"].Id,
+                Name = grouped.ContainsKey("original") ? System.IO.Path.GetFileName(grouped["original"].Url) : "no-image.jpg",
+                Url = grouped.ContainsKey("original") ? grouped["original"].Url : $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg",
+                Width = (int)(grouped.ContainsKey("original") ? grouped["original"].Width : 800),
+                Height = (int)(grouped.ContainsKey("original") ? grouped["original"].Height : 800),
+                Formats = new FormatDto
+                {
+                    Thumbnail = grouped.ContainsKey("thumbnail") ? new FormatItemDto
+                    {
+
+                        Url = grouped["thumbnail"].Url,
+                        Width = (int)(grouped["thumbnail"].Width),
+                        Height = (int)(grouped["thumbnail"].Height)
+                    } : null,
+                    Small = grouped.ContainsKey("small") ? new FormatItemDto
+                    {
+                        Url = grouped["small"].Url,
+                        Width = (int)(grouped["small"].Width),
+                        Height = (int)(grouped["small"].Height)
+                    } : null,
+                    Medium = grouped.ContainsKey("medium") ? new FormatItemDto
+                    {
+                        Url = grouped["medium"].Url,
+                        Width = (int)(grouped["medium"].Width),
+                        Height = (int)(grouped["medium"].Height)
+                    } : null,
+                    Large = grouped.ContainsKey("large") ? new FormatItemDto
+                    {
+                        Url = grouped["large"].Url,
+                        Width = (int)(grouped["large"].Width),
+                        Height = (int)(grouped["large"].Height)
+                    } : null,
+                }
+            };
         }
     }
 }
