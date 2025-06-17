@@ -18,12 +18,13 @@ namespace Api_comerce.Services.Wishlists
         public async Task<WishlistResponseDto?> GetWishlistByUserAsync(int userId)
         {
             var wishlist = await _context.Wishlists
-    .Include(w => w.WishlistItems)
-        .ThenInclude(wi => wi.ProductosEmpaque)
-
-            .ThenInclude(pe => pe.Producto) 
-            //.ThenInclude(wi => wi.ImagenProducto)
-    .FirstOrDefaultAsync(w => w.UserId == userId);
+     .Include(w => w.WishlistItems)
+         .ThenInclude(wi => wi.ProductosEmpaque)
+             .ThenInclude(pe => pe.ImagenProducto) 
+     .Include(w => w.WishlistItems)
+         .ThenInclude(wi => wi.ProductosEmpaque)
+             .ThenInclude(pe => pe.Producto) 
+     .FirstOrDefaultAsync(w => w.UserId == userId);
 
             if (wishlist == null) return null;
 
@@ -117,7 +118,7 @@ namespace Api_comerce.Services.Wishlists
             var productoExiste = await _context.ProductosEmpaque.AnyAsync(p => p.Id == productId);
             if (!productoExiste)
             {
-                Console.Write("Producto empaque no existe en BD")
+                Console.Write("Producto empaque no existe en BD");
                 return false;
             }
             var wishlist = await _context.Wishlists
