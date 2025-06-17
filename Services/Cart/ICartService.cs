@@ -9,6 +9,6 @@ namespace Api_comerce.Services.Cart
         Task<List<CartItemDto>> GetCartAsync(int userId);
         Task<bool> RemoveItemAsync(int userId, int productId);
         Task<bool> ClearCartAsync(int userId);
-        
+        Task<bool> UpdateCartItemAsync(int userId, int productEmpaqueId, int quantity);
     }
 }

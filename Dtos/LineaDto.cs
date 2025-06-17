@@ -7,7 +7,7 @@
         public string? Slug { get; set; }
         public DateTime? FechaCreado { get; set; }
 
-        public List<ProductoDto> Productos { get; set; } = new();
+        public List<ProductoEmpaqueDto> ProductoEmpaque { get; set; } = new();
     }
     
 }

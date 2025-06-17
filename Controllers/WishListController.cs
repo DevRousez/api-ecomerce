@@ -28,7 +28,7 @@ namespace Api_comerce.Controllers
             int userId = GetUserId();
             var wishlist = await _wishlistService.GetWishlistByUserAsync(userId);
             if (wishlist == null)
-                return NotFound("Wishlist not found");
+                return NotFound("Wishlist no Encontrado");
             return Ok(wishlist);
         }
         [Authorize]
@@ -37,8 +37,8 @@ namespace Api_comerce.Controllers
         {
             int userId = GetUserId();
             var result = await _wishlistService.AddProductToWishlistAsync(userId, dto.ProductId);
-            if (!result) return BadRequest("Product already in wishlist");
-            return Ok("Product added to wishlist");
+            if (!result) return BadRequest("Producto ya existe en wishlist");
+            return Ok("Producto añadido a wishlist");
         }
         [Authorize]
         [HttpDelete("remove")]
@@ -46,8 +46,8 @@ namespace Api_comerce.Controllers
         {
             int userId = GetUserId();
             var result = await _wishlistService.RemoveProductFromWishlistAsync(userId, dto.ProductId);
-            if (!result) return NotFound("Product not found in wishlist");
-            return Ok("Product removed from wishlist");
+            if (!result) return NotFound("Producto no encontrado en wishlist");
+            return Ok("Product eliminado de wishlist");
         }
         [Authorize]
         [HttpDelete("clear")]
@@ -55,8 +55,8 @@ namespace Api_comerce.Controllers
         {
             int userId = GetUserId();
             var result = await _wishlistService.ClearWishlistAsync(userId);
-            if (!result) return NotFound("Wishlist not found");
-            return Ok("Wishlist cleared");
+            if (!result) return NotFound("Wishlist no encontrado");
+            return Ok("Wishlist limpiado");
         }
     }
 }

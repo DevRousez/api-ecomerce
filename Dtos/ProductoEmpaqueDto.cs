@@ -4,7 +4,7 @@ namespace Api_comerce.Dtos
 {
     public class ProductoEmpaqueDto
     {
-        public int Id { get; set; }
+        public int ProductoEmpaqueId { get; set; }
         public int ProductoId { get; set; }
         public int EmpaqueId { get; set; }
         public string? Codigo { get; set; }

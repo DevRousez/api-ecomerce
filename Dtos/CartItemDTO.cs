@@ -13,7 +13,7 @@ namespace Api_comerce.Dtos
         public int Id { get; set; }
 
         public int UserId { get; set; }
-        public int ProductId { get; set; }
+        public int ProductEmpaqueId { get; set; }
 
         public int Quantity { get; set; }
         public decimal Price { get; set; }
@@ -28,7 +28,7 @@ namespace Api_comerce.Dtos
 
     public class CartItemResultDto
     {
-        public int ProductId { get; set; }
+        public int ProductEmpaqueId { get; set; }
         public int Quantity { get; set; }
         public decimal Price { get; set; }
 
@@ -37,7 +37,7 @@ namespace Api_comerce.Dtos
 
     public class ProductEmpaqueDto
     {
-        public int Id { get; set; }
+        public int ProductEmpaqueId { get; set; }
         public string Codigo { get; set; }
         public decimal PVenta { get; set; }
 
@@ -49,5 +49,10 @@ namespace Api_comerce.Dtos
         public string Url { get; set; }
         public string Type { get; set; }
         public string Label { get; set; }
+    }
+    public class UpdateCartItemRequest
+    {
+        public int ProductEmpaqueId { get; set; }
+        public int Quantity { get; set; }
     }
 }

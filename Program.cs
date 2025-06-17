@@ -56,9 +56,34 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = config["Jwt:Issuer"],
-            ValidAudience = config["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"])),
+
+            // Aceptar múltiples emisores
+            IssuerValidator = (issuer, token, parameters) =>
+            {
+                var validIssuers = new[] {
+                config["Jwt:Issuer"], // Emisor local
+                "https://accounts.google.com", // Emisor de Google
+                "accounts.google.com"
+            };
+
+                if (!validIssuers.Contains(issuer))
+                    throw new SecurityTokenInvalidIssuerException("Issuer inválido");
+
+                return issuer;
+            },
+
+            // Aceptar múltiples audiencias
+            AudienceValidator = (audiences, token, parameters) =>
+            {
+                var validAudiences = new[]
+                    {
+                        config["Jwt:Audience"],      
+                        config["Google:ClientId"]     // ClientId de tu app en Google
+                     };
+
+                return audiences.Any(aud => validAudiences.Contains(aud));
+            }
         };
     });
 
@@ -94,6 +119,11 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
+
+//builder.Services.AddDbContext<AppContext>(options =>
+//    options.UseSqlServer(config["ConnectionString("DefaultConnection")")
+//           .EnableSensitiveDataLogging()
+//           .LogTo(Console.WriteLine, LogLevel.Information));
 
 
 
