@@ -12,6 +12,6 @@ namespace Api_comerce.Models
 
         public virtual Wishlist Wishlist { get; set; }
         [ForeignKey("ProductId")]
-        public virtual ProductosEmpaque ProductosEmpaque { get; set; }  // Asume que así se llama tu entidad de productos
+        public virtual ProductosEmpaque ProductosEmpaque { get; set; } 
     }
 }

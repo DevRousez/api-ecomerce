@@ -113,6 +113,13 @@ namespace Api_comerce.Services.Wishlists
 
         public async Task<bool> AddProductToWishlistAsync(int userId, int productId)
         {
+
+            var productoExiste = await _context.ProductosEmpaque.AnyAsync(p => p.Id == productId);
+            if (!productoExiste)
+            {
+                Console.Write("Producto empaque no existe en BD")
+                return false;
+            }
             var wishlist = await _context.Wishlists
                 .Include(w => w.WishlistItems)
                 .FirstOrDefaultAsync(w => w.UserId == userId);
@@ -131,6 +138,7 @@ namespace Api_comerce.Services.Wishlists
             wishlist.WishlistItems.Add(new WishlistItem
             {
                 ProductId = productId,
+                Quantity =1
                
             });
 
