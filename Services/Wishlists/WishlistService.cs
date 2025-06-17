@@ -37,7 +37,7 @@ namespace Api_comerce.Services.Wishlists
                     Quantity = item.Quantity,
                     ProductoEmpaque = new ProductoEmpaqueDto
                     {
-                        Id = item.ProductosEmpaque.Id,
+                        ProductoEmpaqueId = item.ProductosEmpaque.Id,
                         ProductoId = item.ProductosEmpaque.ProductoId,
                         EmpaqueId= item.ProductosEmpaque.EmpaqueId,
                         Codigo = item.ProductosEmpaque?.Codigo ,
@@ -47,7 +47,7 @@ namespace Api_comerce.Services.Wishlists
                         Producto = item.ProductosEmpaque.Producto != null?
                         new ProductoDto
                         {
-                          Id =item.ProductosEmpaque.Producto.Id,
+                          ProductId =item.ProductosEmpaque.Producto.Id,
                                 ProductoSatId =item.ProductosEmpaque.Producto.ProductoSatId,
                                 Prefijo = item.ProductosEmpaque.Producto.Prefijo,
                                      NombreProducto = item.ProductosEmpaque.Producto.NombreProducto,

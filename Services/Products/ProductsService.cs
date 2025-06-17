@@ -47,7 +47,7 @@ namespace Api_comerce.Services.Products
             // SEGUNDA PARTE: Creamos los DTOs en memoria
             var productos = productosRaw.Select(p => new ProductoEcommerceDto
             {
-                Id = p.Id,
+                ProductoEmpaqueId = p.Id,
                 Name = $"{p?.Codigo ?? "SIN-COD"} - {p.Producto.NombreProducto ?? "NO DATO"} - {p?.Empaque?.Empaque ?? "SIN UNIDAD"}",
                 Featured = false,
                 Price = p?.PVenta ?? 0,
@@ -159,7 +159,7 @@ namespace Api_comerce.Services.Products
      .Where(p => p.Id == id)
      .Select(p => new ProductoEcommerceDto
      {
-         Id = p.Id,
+         ProductoEmpaqueId = p.Id,
          Name =
         (p.Codigo ?? "NO DATO") + " - " +
         (p.Producto.NombreProducto ?? "NO DATO") + " - " +
@@ -277,7 +277,7 @@ namespace Api_comerce.Services.Products
             var baseUrl ="";
 
             var defaultBadges = new List<MarcaProductoDto>
-{
+            {
                 new MarcaProductoDto { Id = 0, Marca = "NO DATO", Slug = "no-dato" }
             };
 
@@ -299,7 +299,7 @@ namespace Api_comerce.Services.Products
             // SEGUNDA PARTE: Creamos los DTOs en memoria
             var productos = productosRaw.Select(p => new ProductoEcommerceDto
             {
-                Id = p.Id,
+                ProductoEmpaqueId = p.Id,
                 Name = $"{p?.Codigo ?? "SIN-COD"} - {p.Producto.NombreProducto ?? "NO DATO"} - {p?.Empaque?.UnidadSAT?.UnidadSat ?? "SIN UNIDAD"}",
                 Featured = false,
                 Price = p?.PVenta ?? 0,
@@ -390,13 +390,14 @@ namespace Api_comerce.Services.Products
         public async Task<List<LineaDto>>GetProductosCategories(int categoriaId=0,string slug = "null")
         {
 
-            var query =  _context.Lineas
+            var query = _context.Lineas
     .Include(ci => ci.Productos)
         .ThenInclude(p => p.MarcaProducto)
     .Include(ci => ci.Productos)
         .ThenInclude(p => p.ProductosEmpaque)
+         .ThenInclude(pe => pe.ImagenProducto)
         .AsQueryable();
-           
+
 
             if (categoriaId != 0)
             {
@@ -407,62 +408,118 @@ namespace Api_comerce.Services.Products
             {
                 query = query.Where(ci => ci.Slug.Contains(slug));
             }
+            
+            var items = await query.ToListAsync();
 
-            var lineas = await query.ToListAsync();
-
-            var items = lineas.Select(ci => new LineaDto
+            var lineas = items.Select(linea => new LineaDto
             {
-                Id = ci.Id,
-                Linea = ci.Linea,
-                Slug = ci.Slug,
-                FechaCreado = ci.FechaCreado,
-                Productos = ci.Productos.Select(p => new ProductoDto
-                {
-                    Id = p.Id,
-                    ProductoSatId = p.ProductoSatId,
-                    Prefijo = p.Prefijo,
-                    NombreProducto = p.NombreProducto,
-                    Descripcion = p.Descripcion,
-                    DescripcionBreve = p.DescripcionBreve,
-                    Slug = p.Slug,
-                    Rating = p.Rating,
-                    Acumulador = p.Acumulador,
-                    ProductoIdAcumulador = p.ProductoIdAcumulador,
-                    Linea = new LineaDto
-                    {
-                        Id = ci.Id,
-                        Linea = ci.Linea,
-                        Slug = ci.Slug,
-                        FechaCreado = ci.FechaCreado,
-                    },
-                    MarcaProducto = p.MarcaProducto == null ? new MarcaProductoDto
-                    {
-                        Id = 0,
-                        Marca = "NO DATO",
-                        Slug = "no-dato"
-                    } : new MarcaProductoDto
-                    {
-                        Id = p.MarcaProducto.Id,
-                        Marca = p.MarcaProducto.Marca,
-                        Slug = p.MarcaProducto.Slug,
-                    },
-                    ProductoSat = new ProductoSatDto { },
-                    UnidadSat = new UnidadSatDto { },
-                    DescripcionProdSat = "",
-                    productoEmpaques = p.ProductosEmpaque?.Select(pe => new ProductoEmpaqueDto
-                    {
-                        Id = pe.Id,
-                        ProductoId = pe.ProductoId,
-                        EmpaqueId = pe.EmpaqueId,
-                        Codigo = pe.Codigo,
-                        PCompra = pe.PCompra,
-                        PVenta = pe.PVenta,
-                        Descuento = (float?)pe.Descuento,
-                        Activo = pe.Activo,
-                    }).ToList() ?? new List<ProductoEmpaqueDto>()
-                }).ToList()
+                Id = linea.Id,
+                Linea = linea.Linea,
+                Slug = linea.Slug,
+                FechaCreado = linea.FechaCreado,
+                ProductoEmpaque = linea.Productos
+                         .SelectMany(p => p.ProductosEmpaque.Select(pe => new ProductoEmpaqueDto
+                         {
+                             ProductoEmpaqueId = pe.Id,
+                             ProductoId = pe.ProductoId,
+                             EmpaqueId = pe.EmpaqueId,
+                             Codigo = pe.Codigo ?? "NO DATO",
+                             PCompra = pe.PCompra ?? 0,
+                             PVenta = pe.PVenta ?? 0,
+                             Descuento = (float?)(pe.Descuento ?? 0),
+                             Activo = pe.Activo ?? false,
+
+                             Producto = new ProductoDto
+                             {
+                                 ProductId = p.Id,
+                                 ProductoSatId = p.ProductoSatId,
+                                 Prefijo = p.Prefijo ?? "NO DATO",
+                                 NombreProducto = p.NombreProducto ?? "NO DATO",
+                                 Descripcion = p.Descripcion ?? "NO DATO",
+                                 DescripcionBreve = p.DescripcionBreve ?? "NO DATO",
+                                 Slug = p.Slug ?? "no-slug",
+                                 Rating = p.Rating ?? 0,
+                                 Acumulador = p.Acumulador ?? false,
+                                 ProductoIdAcumulador = p.ProductoIdAcumulador ?? 0,
+                             },
+
+                             Empaque = new EmpaqueDto
+                             {
+                                 Id = pe.Empaque?.Id ?? 0,
+                                 Codigo = pe.Empaque?.CodigoEmpaque ?? "NO DATO"
+                             },
+
+                             ImagenProducto = pe.ImagenProducto != null && pe.ImagenProducto.Any()
+                                ? pe.ImagenProducto
+                                    .Select(img => new ImageDto
+                                    {
+                                        Name = System.IO.Path.GetFileName(img.Url),
+                                        Url = img.Url,
+                                        Width = (int)(img.Width ?? 800),
+                                        Height = (int)(img.Height ?? 800),
+                                        Formats = new FormatDto()
+                                    }).ToList()
+                                : new List<ImageDto>(),
+                         }))
+                         .ToList()
             }).ToList();
-            return items;
+
+            //var query = _context.Lineas
+            //.Where(linea =>
+            //    (categoriaId == 0 || linea.Id == categoriaId) &&
+            //    (string.IsNullOrWhiteSpace(slug) || slug == "null" || linea.Slug.Contains(slug)))
+            //.Take(10)
+            //.Select(linea => new LineaDto
+            //{
+            //    Id = linea.Id,
+            //    Linea = linea.Linea,
+            //    Slug = linea.Slug,
+            //    FechaCreado = linea.FechaCreado,
+            //    ProductoEmpaque = linea.Productos.SelectMany(p => p.ProductosEmpaque.Select(pe => new ProductoEmpaqueDto
+            //    {
+            //        ProductoEmpaqueId = pe.Id,
+            //        ProductoId = pe.ProductoId,
+            //        EmpaqueId = pe.EmpaqueId,
+            //        Codigo = pe.Codigo ?? "NO DATO",
+            //        PCompra = pe.PCompra ?? 0,
+            //        PVenta = pe.PVenta ?? 0,
+            //        Descuento = (float?)(pe.Descuento ?? 0),
+            //        Activo = pe.Activo ?? false,
+
+            //        Producto = new ProductoDto
+            //        {
+            //            ProductId = p.Id,
+            //            ProductoSatId = p.ProductoSatId,
+            //            Prefijo = p.Prefijo ?? "NO DATO",
+            //            NombreProducto = p.NombreProducto ?? "NO DATO",
+            //            Descripcion = p.Descripcion ?? "NO DATO",
+            //            DescripcionBreve = p.DescripcionBreve ?? "NO DATO",
+            //            Slug = p.Slug ?? "no-slug",
+            //            Rating = p.Rating ?? 0,
+            //            Acumulador = p.Acumulador ?? false,
+            //            ProductoIdAcumulador = p.ProductoIdAcumulador ?? 0
+            //        },
+
+            //        Empaque = new EmpaqueDto
+            //        {
+            //            Id = pe.Empaque != null ? pe.Empaque.Id : 0,
+            //            Codigo = pe.Empaque != null ? pe.Empaque.CodigoEmpaque : "NO DATO"
+            //        },
+
+            //        ImagenProducto = pe.ImagenProducto.Select(img => new ImageDto
+            //        {
+            //            Name = System.IO.Path.GetFileName(img.Url),
+            //            Url = img.Url,
+            //            Width = (int)(img.Width ?? 800),
+            //            Height = (int)(img.Height ?? 800),
+            //            Formats = new FormatDto()
+            //        }).ToList()
+            //    })).ToList()
+            //});
+
+            //var lineas = await query.ToListAsync();
+
+            return lineas;
 
         }
 
@@ -578,7 +635,7 @@ namespace Api_comerce.Services.Products
             // SEGUNDA PARTE: Creamos los DTOs en memoria
             var productos = productosRaw.Select(p => new ProductoEcommerceDto
             {
-                Id = p.Id,
+                ProductoEmpaqueId = p.Id,
                 Name = $"{p?.Codigo ?? "SIN-COD"} - {p.Producto.NombreProducto ?? "NO DATO"} - {p?.Empaque?.UnidadSAT?.UnidadSat ?? "SIN UNIDAD"}",
                 Featured = false,
                 Price = p?.PVenta ?? 0,
@@ -624,7 +681,7 @@ namespace Api_comerce.Services.Products
                     }
                     : defaultBadges,
 
-                Images = p.ImagenProducto.Any() == true
+                Images =  p.ImagenProducto != null && p.ImagenProducto.Any()
                         ? p.ImagenProducto.Select(img => new ImageDto
                         {
                             Name = System.IO.Path.GetFileName(img.Url),
@@ -673,7 +730,7 @@ namespace Api_comerce.Services.Products
                 //.Where(c => c.Activo) // Opcional
                 .Select(c => new ProductoEmpaqueDto
                 {
-                    Id = c.Id,
+                    ProductoEmpaqueId = c.Id,
                     Codigo = c.Codigo
                 }).ToList();
         }
@@ -687,39 +744,44 @@ namespace Api_comerce.Services.Products
                 .GroupBy(img => img.Type)
                 .ToDictionary(g => g.Key, g => g.FirstOrDefault());
 
+            grouped.TryGetValue("original", out var original);
+            grouped.TryGetValue("thumbnail", out var thumbnail);
+            grouped.TryGetValue("small", out var small);
+            grouped.TryGetValue("medium", out var medium);
+            grouped.TryGetValue("large", out var large);
+
             return new ImageDto
             {
-                Id = grouped["original"].Id,
-                Name = grouped.ContainsKey("original") ? System.IO.Path.GetFileName(grouped["original"].Url) : "no-image.jpg",
-                Url = grouped.ContainsKey("original") ? grouped["original"].Url : $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg",
-                Width = (int)(grouped.ContainsKey("original") ? grouped["original"].Width : 800),
-                Height = (int)(grouped.ContainsKey("original") ? grouped["original"].Height : 800),
+                Id = original?.Id ?? 0,
+                Name = original != null ? System.IO.Path.GetFileName(original.Url) : "no-image.jpg",
+                Url = original?.Url ?? $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg",
+                Width = (int)(original?.Width ?? 800),
+                Height = (int)(original?.Height ?? 800),
                 Formats = new FormatDto
                 {
-                    Thumbnail = grouped.ContainsKey("thumbnail") ? new FormatItemDto
+                    Thumbnail = thumbnail != null ? new FormatItemDto
                     {
-
-                        Url = grouped["thumbnail"].Url,
-                        Width = (int)(grouped["thumbnail"].Width),
-                        Height = (int)(grouped["thumbnail"].Height)
+                        Url = thumbnail.Url,
+                        Width = (int)(thumbnail.Width),
+                        Height = (int)(thumbnail.Height)
                     } : null,
-                    Small = grouped.ContainsKey("small") ? new FormatItemDto
+                    Small = small != null ? new FormatItemDto
                     {
-                        Url = grouped["small"].Url,
-                        Width = (int)(grouped["small"].Width),
-                        Height = (int)(grouped["small"].Height)
+                        Url = small.Url,
+                        Width = (int)(small.Width),
+                        Height = (int)(small.Height)
                     } : null,
-                    Medium = grouped.ContainsKey("medium") ? new FormatItemDto
+                    Medium = medium != null ? new FormatItemDto
                     {
-                        Url = grouped["medium"].Url,
-                        Width = (int)(grouped["medium"].Width),
-                        Height = (int)(grouped["medium"].Height)
+                        Url = medium.Url,
+                        Width = (int)(medium.Width),
+                        Height = (int)(medium.Height)
                     } : null,
-                    Large = grouped.ContainsKey("large") ? new FormatItemDto
+                    Large = large != null ? new FormatItemDto
                     {
-                        Url = grouped["large"].Url,
-                        Width = (int)(grouped["large"].Width),
-                        Height = (int)(grouped["large"].Height)
+                        Url = large.Url,
+                        Width = (int)(large.Width),
+                        Height = (int)(large.Height)
                     } : null,
                 }
             };

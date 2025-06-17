@@ -4,7 +4,7 @@ namespace Api_comerce.Dtos
 {
     public class ProductoEcommerceDto
     {
-        public int Id { get; set; }
+        public int ProductoEmpaqueId { get; set; }
         public string Name { get; set; }
         public bool Featured { get; set; } = false;
         public decimal Price { get; set; }

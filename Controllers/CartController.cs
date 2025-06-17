@@ -29,7 +29,7 @@ namespace Api_comerce.Controllers
             var userIdClaim = User.Claims.FirstOrDefault(c =>
              c.Type == ClaimTypes.NameIdentifier);
 
-            if (userIdClaim == null) throw new Exception("UserId no encontrado en token");
+            if (userIdClaim == null) throw new Exception("Usuario no encontrado en token");
 
             return int.Parse(userIdClaim.Value);
         }
@@ -48,7 +48,7 @@ namespace Api_comerce.Controllers
         public async Task<IActionResult> AddItems([FromBody] AddCartItemsRequest request)
         {
             if (request?.Items == null || !request.Items.Any())
-                return BadRequest(new { success = false, message = "No items provided" });
+                return BadRequest(new { success = false, message = "Productos " });
 
             var userId = GetUserId();
             var addedItems = await _cartService.AddItemsToCartAsync(userId, request.Items);
@@ -63,9 +63,9 @@ namespace Api_comerce.Controllers
             var userId = GetUserId();
             var removed = await _cartService.RemoveItemAsync(userId, productId);
 
-            if (!removed) return NotFound(new { success = false, message = "Item not found in cart" });
+            if (!removed) return NotFound(new { success = false, message = "Producto no encontrado en el Carrito" });
 
-            return Ok(new { success = true, message = "Item removed" });
+            return Ok(new { success = true, message = "Producto eliminado" });
         }
 
         // DELETE cart/clear
@@ -74,10 +74,28 @@ namespace Api_comerce.Controllers
         {
             var userId = GetUserId();
             await _cartService.ClearCartAsync(userId);
-            return Ok(new { success = true, message = "Cart cleared" });
+            return Ok(new { success = true, message = "Carrito vacio" });
         }
 
-       
+        [HttpPut("update")]
+        [Authorize]
+        public async Task<IActionResult> UpdateCartItem([FromBody] UpdateCartItemRequest request)
+        {
+            // Obtener userId desde el JWT
+            var userId = GetUserId();
+
+            if (userId == 0)
+                return Unauthorized("Token inválido o faltante.");
+
+            var success = await _cartService.UpdateCartItemAsync(userId, request.ProductEmpaqueId, request.Quantity);
+
+            if (!success)
+                return NotFound("Producto no encontrado en el carrito");
+
+            return Ok("Producto actualizado correctamente");
+        }
+
+
     }
 
 }

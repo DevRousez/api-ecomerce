@@ -18,7 +18,7 @@ namespace Api_comerce.Services.Cart
         {
             if (items == null || !items.Any()) return new List<CartItemResultDto>();
 
-            var productIds = items.Select(i => i.ProductId).ToList();
+            var productIds = items.Select(i => i.ProductEmpaqueId).ToList();
 
             var products = await _context.ProductosEmpaque
                 .Include(p => p.ImagenProducto)
@@ -34,10 +34,10 @@ namespace Api_comerce.Services.Cart
 
             foreach (var item in items)
             {
-                if (!products.TryGetValue(item.ProductId, out var product))
+                if (!products.TryGetValue(item.ProductEmpaqueId, out var product))
                     continue;
 
-                if (existingCartItems.TryGetValue(item.ProductId, out var existing))
+                if (existingCartItems.TryGetValue(item.ProductEmpaqueId, out var existing))
                 {
                     existing.Quantity += item.Quantity;
                     existing.UpdatedAt = now;
@@ -48,7 +48,7 @@ namespace Api_comerce.Services.Cart
                     var newItem = new CartItem
                     {
                         UserId = userId,
-                        ProductId = item.ProductId,
+                        ProductId = item.ProductEmpaqueId,
                         Quantity = item.Quantity,
                         Price = (decimal)product.PVenta,
                         Subtotalproduc= (decimal)product.PVenta * item.Quantity,
@@ -67,12 +67,12 @@ namespace Api_comerce.Services.Cart
             // Convertir a DTOs
             var resultDto = result.Select(ci => new CartItemResultDto
             {
-                ProductId = ci.ProductId,
+                ProductEmpaqueId = ci.ProductId,
                 Quantity = ci.Quantity,
                 Price = ci.Price,
                 ProductEmpaque = new ProductEmpaqueDto
                 {
-                    Id = ci.ProductEmpaque.Id,
+                    ProductEmpaqueId = ci.ProductEmpaque.Id,
                     Codigo = ci.ProductEmpaque.Codigo,
                     PVenta = (decimal)ci.ProductEmpaque.PVenta,
                     ImagenProducto = ci.ProductEmpaque.ImagenProducto?.Select(img => new ImagenProductoDto
@@ -95,7 +95,7 @@ namespace Api_comerce.Services.Cart
             {
                 Id = ci.Id,
                 UserId = ci.UserId,
-                ProductId = ci.ProductId,
+                ProductEmpaqueId = ci.ProductId,
                 Quantity = ci.Quantity,
                 Price = ci.Price,
                 CreatedAt = ci.CreatedAt,
@@ -123,7 +123,7 @@ namespace Api_comerce.Services.Cart
                 },
                 ProductEmpaque = new ProductoEmpaqueDto
                 {
-                    Id = ci.ProductEmpaque.Id,
+                    ProductoEmpaqueId = ci.ProductEmpaque.Id,
                     ProductoId = ci.ProductEmpaque.ProductoId,
                     EmpaqueId = ci.ProductEmpaque.EmpaqueId,
                     Codigo = ci.ProductEmpaque.Codigo,
@@ -131,7 +131,17 @@ namespace Api_comerce.Services.Cart
                     PVenta = ci.ProductEmpaque.PVenta,
                     Descuento = (float?)ci.ProductEmpaque.Descuento,
                     Activo = ci.ProductEmpaque.Activo,
-                    ImagenProducto = null,
+                    ImagenProducto =  ci.ProductEmpaque.ImagenProducto != null && ci.ProductEmpaque.ImagenProducto.Any()
+                                ? ci.ProductEmpaque.ImagenProducto
+                                    .Select(img => new ImageDto
+                                    {
+                                        Name = System.IO.Path.GetFileName(img.Url),
+                                        Url = img.Url,
+                                        Width = (int)(img.Width ?? 800),
+                                        Height = (int)(img.Height ?? 800),
+                                        Formats = new FormatDto()
+                                    }).ToList()
+                                : new List<ImageDto>(),
                     Empaque = 
                     new EmpaqueDto
                     {
@@ -147,7 +157,7 @@ namespace Api_comerce.Services.Cart
                     },
                     Producto = new ProductoDto
                     {
-                        Id = ci.ProductEmpaque.Producto.Id,
+                        ProductId = ci.ProductEmpaque.Producto.Id,
                         ProductoSatId = ci.ProductEmpaque.Producto.ProductoSatId,
                         Prefijo = ci.ProductEmpaque.Producto.Prefijo,
                         NombreProducto = ci.ProductEmpaque.Producto.NombreProducto,
@@ -167,6 +177,7 @@ namespace Api_comerce.Services.Cart
                             Marca= ci.ProductEmpaque.Producto.MarcaProducto.Marca,
                             Slug = ci.ProductEmpaque.Producto.MarcaProducto.Slug
                         },
+                        
                         //,
                         //LineaId = ci.ProductEmpaque.Producto.LineaId,
                         //MarcaId = ci.ProductEmpaque.Producto.MarcaId,
@@ -201,6 +212,21 @@ namespace Api_comerce.Services.Cart
             await _context.SaveChangesAsync();
             return true;
 
+        }
+        public async Task<bool> UpdateCartItemAsync(int userId, int productId, int quantity)
+        {
+            var cartItem = await _context.CartItems
+                .FirstOrDefaultAsync(c => c.UserId == userId && c.ProductId == productId);
+
+            if (cartItem == null)
+                return false;
+
+            cartItem.Quantity = quantity;
+            cartItem.Subtotalproduc = cartItem.Price * quantity;
+            cartItem.UpdatedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

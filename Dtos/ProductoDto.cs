@@ -5,7 +5,7 @@ namespace Api_comerce.Dtos
 {
     public class ProductoDto
     {
-        public int Id { get; set; }
+        public int ProductId { get; set; }
         public int? ProductoSatId { get; set; }
         public string Prefijo { get; set; }
         public string NombreProducto { get; set; }

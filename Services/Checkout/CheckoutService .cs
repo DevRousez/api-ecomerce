@@ -34,9 +34,10 @@ namespace Api_comerce.Services.Checkout
             {
                 orden.Detalles.Add(new OrdenDetalle
                 {
-                    ProductoId = item.ProductId,
+                    ProductoId = item.ProductEmpaqueId,
                     Cantidad = item.Quantity,
-                    Precio = item.Price
+                    Precio = item.Price,
+                 
                 });
             }
 
