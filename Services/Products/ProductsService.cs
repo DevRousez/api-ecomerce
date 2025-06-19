@@ -285,11 +285,13 @@ namespace Api_comerce.Services.Products
 
             var productosRaw = await _context.ProductosEmpaque
             .Include(pe => pe.Producto)
+            
                 .ThenInclude(p => p.Linea)
             .Include(pe => pe.Producto)
                 .ThenInclude(p => p.MarcaProducto)
             .Include(pe => pe.Empaque)
                 .ThenInclude(e => e.UnidadSAT)
+                 .Include(pe => pe.ImagenProducto)
                   .Skip(offset)
       .Take(limit)
                  //.Where(p => p.ProductoId == id)
@@ -344,18 +346,20 @@ namespace Api_comerce.Services.Products
                 }
                     }
                     : defaultBadges,
-                Images = p.ImagenProducto.Any() == true
-                        ? p.ImagenProducto.Select(img => new ImageDto
-                        {
-                            Name = System.IO.Path.GetFileName(img.Url),
-                            Url = img.Url,
-                            Width = (int)img.Width,
-                            Height = (int)img.Height,
-                            Formats = new FormatDto()
-                        }).ToList()
-                        : new List<ImageDto>(),
-                Thumbnail = MapImage(p.ImagenProducto.ToList(), "front"),
-                ThumbnailBack = MapImage(p.ImagenProducto.ToList(), "back"),
+                Images = p.ImagenProducto != null && p.ImagenProducto.Any()
+    ? p.ImagenProducto.Select(img => new ImageDto
+    {
+        Id = img.Id,
+        Name = System.IO.Path.GetFileName(img.Url),
+        Url = img.Url,
+        Width = (int)img.Width,
+        Height = (int)img.Height,
+        
+        Formats = new FormatDto()
+    }).ToList()
+    : new List<ImageDto>(),
+                Thumbnail = MapImage(p.ImagenProducto?.ToList() ?? new List<ImagenProducto>(), "front"),
+                ThumbnailBack = MapImage(p.ImagenProducto?.ToList() ?? new List<ImagenProducto>(), "back"),
 
 
                 ProductCategories = p.Producto.Linea != null
