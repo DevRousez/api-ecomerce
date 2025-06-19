@@ -27,11 +27,11 @@ namespace Api_comerce.Controllers
 
         [HttpGet("limit")]
         public async Task<ActionResult<IEnumerable<ProductoEcommerceDto>>> GetProductosLimitAsync(
-            [FromQuery] int limit = 10,
+            [FromQuery] int _limit = 10,
             [FromQuery] int offset = 0
             )
         {
-            var productos = await _productsService.GetProductosLimitAsync(limit, offset);
+            var productos = await _productsService.GetProductosLimitAsync(_limit, offset);
 
             if (productos == null || !productos.Any())
             {
