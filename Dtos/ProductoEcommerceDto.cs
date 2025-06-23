@@ -15,10 +15,13 @@ namespace Api_comerce.Dtos
         public int RatingCount { get; set; } = 0;
         public string Description { get; set; }
         public string ShortDescription { get; set; }
+
+        public string CategoriaTipo { get; set; }
         public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
 
         public List<EmpaqueDto> Sizes { get; set; }
+        public sizeEmpaqueDto SizesEmpaque { get; set; }
         public List<string> Colors { get; set; }
         public List<MarcaProductoDto> Badges { get; set; }
         public List<ImageDto> Images { get; set; } = new();
@@ -26,6 +29,7 @@ namespace Api_comerce.Dtos
         public ImageDto ThumbnailBack { get; set; }
         public List<MarcaProductoDto > ProductBrands { get; set; } 
         public List<LineaDto> ProductCategories { get; set; }
+        public List<ProductosCaracteristicasDTO> ProductosCaracteristicas { get; set; }
     }
     public class ImageDto
     {

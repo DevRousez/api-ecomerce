@@ -15,6 +15,7 @@ namespace Api_comerce.Dtos
         public int? Rating { get; set; }
         public bool? Acumulador { get; set; }
         public int? ProductoIdAcumulador { get; set; }
+        public string CategoriaTipo { get; set; }   
 
         public LineaDto? Linea { get; set; }
         public MarcaProductoDto? MarcaProducto { get; set; }
@@ -24,6 +25,7 @@ namespace Api_comerce.Dtos
         public string DescripcionProdSat { get; set; }
 
         public List<ProductoEmpaqueDto> productoEmpaques { get; set; }
+        public List<ProductosCaracteristicasDTO> ProductosCaracteristicas { get; set; }
     }
 
     

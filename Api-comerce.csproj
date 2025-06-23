@@ -10,6 +10,21 @@
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'https' " />
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
   <ItemGroup>
+    <Compile Remove="Migrations\20250610030855_CreateCartItem.cs" />
+    <Compile Remove="Migrations\20250610030855_CreateCartItem.Designer.cs" />
+    <Compile Remove="Migrations\20250611134145_AddImagenProducto.cs" />
+    <Compile Remove="Migrations\20250611134145_AddImagenProducto.Designer.cs" />
+    <Compile Remove="Migrations\20250614200115_CreateOrderTables.cs" />
+    <Compile Remove="Migrations\20250614200115_CreateOrderTables.Designer.cs" />
+    <Compile Remove="Migrations\20250614204707_AgregarMetodoPagoAOrden.cs" />
+    <Compile Remove="Migrations\20250614204707_AgregarMetodoPagoAOrden.Designer.cs" />
+    <Compile Remove="Migrations\20250615175503_CreateOrdenesAndDetalles.cs" />
+    <Compile Remove="Migrations\20250615175503_CreateOrdenesAndDetalles.Designer.cs" />
+    <Compile Remove="Migrations\20250615194227_CreateWishLists.cs" />
+    <Compile Remove="Migrations\20250615194227_CreateWishLists.Designer.cs" />
+    <Compile Remove="Migrations\AppDbContextModelSnapshot.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="Google.Apis.Auth" Version="1.69.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.5" />

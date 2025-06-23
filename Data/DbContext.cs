@@ -24,6 +24,8 @@ namespace Api_comerce.Data
         public DbSet<OrdenDetalle> OrdenDetalle { get; set; }
         public DbSet<Wishlist> Wishlists { get; set; }
         public DbSet<WishlistItem> WishlistItems { get; set; }
+        public DbSet<ProductosCaracteristicas> ProductosCaracteristicas { get; set; }
+        public DbSet<ProductosComentarios> ProductosComentarios { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

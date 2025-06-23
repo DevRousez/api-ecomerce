@@ -24,6 +24,8 @@ namespace Api_comerce.Models
         public int? LineaId { get; set; }
         public int? MarcaId { get; set; }
 
+        public string CategoriaTipo { get; set; }
+
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public DateTime CreatedAt { get; set; }
 
@@ -43,6 +45,10 @@ namespace Api_comerce.Models
 
 
         public virtual ICollection<ProductosEmpaque>? ProductosEmpaque { get; set; }
-        
+
+
+        public virtual ICollection<ProductosCaracteristicas>? ProductosCaracteristicas { get; set; }
+
+
     }
 }

@@ -58,44 +58,53 @@ namespace Api_comerce.Services.Products
                 RatingCount = p.Producto.Rating ?? 0,
                 Description = p.Producto.Descripcion ?? "NO DATO",
                 ShortDescription = p.Producto.DescripcionBreve ?? "NO DATO",
+                CategoriaTipo = p.Producto.CategoriaTipo ?? "Default",
+
                 CreatedAt = p.Producto.CreatedAt,
                 UpdatedAt = p.Producto.UpdatedAt,
 
-                Sizes = p.Producto.ProductosEmpaque != null
-                    ? p.Producto.ProductosEmpaque.Select(e => new EmpaqueDto
+                Sizes = new List<EmpaqueDto>
                     {
-                        Id = e.EmpaqueId,
-                        Codigo = e.Codigo ?? "NO DATO",
-                        PCompra = e.PCompra ?? 0,
-                        PVenta = e.PVenta ?? 0,
-                        Descuento = e.Descuento ?? 0,
-                        Activo = e.Activo ?? false,
-                        UnidadSat = e.Empaque?.UnidadSAT != null ? new UnidadSatDto
+                        new EmpaqueDto
                         {
-                            Id = e.Empaque.UnidadSAT.Id,
-                            ClaveUnidad = e.Empaque.UnidadSAT.ClaveUnidad ?? "NO DATO",
-                            UnidadSat = e.Empaque.UnidadSAT.UnidadSat ?? "NO DATO"
-                        } : null
-                    }).ToList()
-                    : new List<EmpaqueDto>(),
+                            Id = p.EmpaqueId,
+                            Empaque = p.Empaque.Empaque,
+                            Contenido = p.Empaque.  Contenido,
+                            Sincronizado = p.Empaque.Sincronizado,
+                            CodigoEmpaque = p.Empaque.CodigoEmpaque,
+                            Codigo = p.Codigo ?? "NO DATO",
+                            PCompra = p.PCompra ?? 0,
+                            PVenta = p.PVenta ?? 0,
+                            Descuento = p.Descuento ?? 0,
+                            Activo = p.Activo ?? false,
+                            FechaCreado = p.Empaque.FechaCreado,
+                            UnidadSat = p.Empaque?.UnidadSAT != null ? new UnidadSatDto
+                            {
+                                Id = p.Empaque.UnidadSAT.Id,
+                                ClaveUnidad = p.Empaque.UnidadSAT.ClaveUnidad ?? "NO DATO",
+                                UnidadSat = p.Empaque.UnidadSAT.UnidadSat ?? "NO DATO"
+                            } : null
+                        }
+                    },
 
                 Colors = new List<string> { "#eb7b8b", "#000000", "#927764" }, // Estático por ahora
 
                 Badges = p.Producto.MarcaProducto != null
                     ? new List<MarcaProductoDto>
                     {
-                new MarcaProductoDto
-                {
-                    Id = p.Producto.MarcaProducto.Id,
-                    Marca = p.Producto.MarcaProducto.Marca ?? "NO DATO",
-                    Slug = p.Producto.MarcaProducto.Slug ?? "NO DATO"
-                }
+                        new MarcaProductoDto
+                        {
+                            Id = p.Producto.MarcaProducto.Id,
+                            Marca = p.Producto.MarcaProducto.Marca ?? "NO DATO",
+                            Slug = p.Producto.MarcaProducto.Slug ?? "NO DATO"
+                        }
                     }
                     : defaultBadges,
 
                 Images = p.ImagenProducto?.Any() == true
                         ? p.ImagenProducto.Select(img => new ImageDto
                         {
+                            Id = img.Id,
                             Name = System.IO.Path.GetFileName(img.Url),
                             Url = img.Url,
                             Width = (int)img.Width,
@@ -104,8 +113,10 @@ namespace Api_comerce.Services.Products
                         }).ToList()
                         : new List<ImageDto>(),
 
-                Thumbnail = MapImage(p.ImagenProducto.ToList(), "front"),
-                ThumbnailBack = MapImage(p.ImagenProducto.ToList(), "back"),
+                //Thumbnail = MapImage(p.ImagenProducto.ToList(), "front"),
+                //ThumbnailBack = MapImage(p.ImagenProducto.ToList(), "back"),
+                Thumbnail = MapImage(p.ImagenProducto?.ToList() ?? new List<ImagenProducto>(), "front"),
+                ThumbnailBack = MapImage(p.ImagenProducto?.ToList() ?? new List<ImagenProducto>(), "back"),
 
                 ProductCategories = p.Producto.Linea != null
                     ? new List<LineaDto>
@@ -178,33 +189,32 @@ namespace Api_comerce.Services.Products
          RatingCount = p.Producto.Rating ?? 0,
          Description = p.Producto.Descripcion ?? "NO DATO",
          ShortDescription = p.Producto.DescripcionBreve ?? "NO DATO",
+         CategoriaTipo = p.Producto.CategoriaTipo ?? "Default",
          CreatedAt = DateTime.Now,
          UpdatedAt = DateTime.Now,
-         Sizes = p.Producto.ProductosEmpaque != null
-    ? p.Producto.ProductosEmpaque.Select(e => new EmpaqueDto
-    {
-        Id = e.EmpaqueId,
-      
-        Empaque = e.Empaque != null ? e.Empaque.Empaque ?? "NO DATO" : "NO DATO",
-        Contenido = e.Empaque != null ? e.Empaque.Contenido ?? 0 : 0,
-        Sincronizado = e.Empaque != null ? e.Empaque.Sincronizado ?? false : false,
-        CodigoEmpaque = e.Empaque != null ? e.Empaque.CodigoEmpaque ?? "NO DATO" : "NO DATO",
-        FechaCreado = e.Empaque != null ? e.Empaque.FechaCreado : null, // Mantenemos null para DateTime?
-        Codigo = e.Codigo ?? "NO DATO",
-        PCompra = e.PCompra ?? 0,
-        PVenta = e.PVenta ?? 0,
-        Descuento = e.Descuento ?? 0,
-        Activo = e.Activo ?? false,
-        UnidadSat = e.Empaque != null && e.Empaque.UnidadSAT != null
-            ? new UnidadSatDto
-            {
-                Id = e.Empaque.UnidadSAT.Id,
-                ClaveUnidad = e.Empaque.UnidadSAT.ClaveUnidad ?? "NO DATO",
-                UnidadSat = e.Empaque.UnidadSAT.UnidadSat ?? "NO DATO"
-            }
-            : null
-    }).ToList()
-    : new List<EmpaqueDto>(),
+         Sizes = new List<EmpaqueDto>
+                    {
+                        new EmpaqueDto
+                        {
+                            Id = p.EmpaqueId,
+                            Empaque = p.Empaque.Empaque,
+                            Contenido = p.Empaque.  Contenido,
+                            Sincronizado = p.Empaque.Sincronizado,
+                            CodigoEmpaque = p.Empaque.CodigoEmpaque,
+                            Codigo = p.Codigo ?? "NO DATO",
+                            PCompra = p.PCompra ?? 0,
+                            PVenta = p.PVenta ?? 0,
+                            Descuento = p.Descuento ?? 0,
+                            Activo = p.Activo ?? false,
+                            FechaCreado = p.Empaque.FechaCreado,
+                            UnidadSat = p.Empaque.UnidadSAT != null ? new UnidadSatDto
+                            {
+                                Id = p.Empaque.UnidadSAT.Id,
+                                ClaveUnidad = p.Empaque.UnidadSAT.ClaveUnidad ?? "NO DATO",
+                                UnidadSat = p.Empaque.UnidadSAT.UnidadSat ?? "NO DATO"
+                            } : null
+                        }
+                    },
          Colors = new List<string> { "#eb7b8b", "#000000", "#927764" },
          Badges = p.Producto.MarcaProducto != null
              ? new List<MarcaProductoDto> {
@@ -220,6 +230,7 @@ namespace Api_comerce.Services.Products
            Images = p.ImagenProducto.Any() == true
                         ? p.ImagenProducto.Select(img => new ImageDto
                         {
+                            Id = img.Id,
                             Name = System.IO.Path.GetFileName(img.Url),
                             Url = img.Url,
                             Width = (int)img.Width,
@@ -227,8 +238,8 @@ namespace Api_comerce.Services.Products
                             Formats = new FormatDto()
                         }).ToList()
                         : new List<ImageDto>(),
-         Thumbnail = MapImage(p.ImagenProducto.ToList(), "front"),
-         ThumbnailBack = MapImage(p.ImagenProducto.ToList(), "back"),
+         Thumbnail = MapImage(p.ImagenProducto.ToList() ?? new List<ImagenProducto>(), "front"),
+         ThumbnailBack = MapImage(p.ImagenProducto.ToList() ?? new List<ImagenProducto>(), "back"),
 
          ProductCategories = p.Producto.Linea != null
              ? new List<LineaDto> {
@@ -312,26 +323,33 @@ namespace Api_comerce.Services.Products
                 RatingCount = p.Producto.Rating ?? 0,
                 Description = p.Producto.Descripcion ?? "NO DATO",
                 ShortDescription = p.Producto.DescripcionBreve ?? "NO DATO",
+                CategoriaTipo = p.Producto.CategoriaTipo ?? "Default",
                 CreatedAt = p.Producto.CreatedAt,
                 UpdatedAt = p.Producto.UpdatedAt,
 
-                Sizes = p.Producto.ProductosEmpaque != null
-                    ? p.Producto.ProductosEmpaque.Select(e => new EmpaqueDto
+                Sizes = new List<EmpaqueDto>
                     {
-                        Id = e.EmpaqueId,
-                        Codigo = e.Codigo ?? "NO DATO",
-                        PCompra = e.PCompra ?? 0,
-                        PVenta = e.PVenta ?? 0,
-                        Descuento = e.Descuento ?? 0,
-                        Activo = e.Activo ?? false,
-                        UnidadSat = e.Empaque?.UnidadSAT != null ? new UnidadSatDto
+                        new EmpaqueDto
                         {
-                            Id = e.Empaque.UnidadSAT.Id,
-                            ClaveUnidad = e.Empaque.UnidadSAT.ClaveUnidad ?? "NO DATO",
-                            UnidadSat = e.Empaque.UnidadSAT.UnidadSat ?? "NO DATO"
-                        } : null
-                    }).ToList()
-                    : new List<EmpaqueDto>(),
+                            Id = p.EmpaqueId,
+                            Empaque = p.Empaque.Empaque,
+                            Contenido = p.Empaque.  Contenido,
+                            Sincronizado = p.Empaque.Sincronizado,
+                            CodigoEmpaque = p.Empaque.CodigoEmpaque,
+                            Codigo = p.Codigo ?? "NO DATO",
+                            PCompra = p.PCompra ?? 0,
+                            PVenta = p.PVenta ?? 0,
+                            Descuento = p.Descuento ?? 0,
+                            Activo = p.Activo ?? false,
+                            FechaCreado = p.Empaque.FechaCreado,
+                            UnidadSat = p.Empaque?.UnidadSAT != null ? new UnidadSatDto
+                            {
+                                Id = p.Empaque.UnidadSAT.Id,
+                                ClaveUnidad = p.Empaque.UnidadSAT.ClaveUnidad ?? "NO DATO",
+                                UnidadSat = p.Empaque.UnidadSAT.UnidadSat ?? "NO DATO"
+                            } : null
+                        }
+                    },
 
                 Colors = new List<string> { "#eb7b8b", "#000000", "#927764" }, // Estático por ahora
 
@@ -395,11 +413,14 @@ namespace Api_comerce.Services.Products
         {
 
             var query = _context.Lineas
-    .Include(ci => ci.Productos)
+     .Include(ci => ci.Productos)
         .ThenInclude(p => p.MarcaProducto)
     .Include(ci => ci.Productos)
         .ThenInclude(p => p.ProductosEmpaque)
-         .ThenInclude(pe => pe.ImagenProducto)
+            .ThenInclude(pe => pe.ImagenProducto)
+    .Include(ci => ci.Productos)
+        .ThenInclude(p => p.ProductosEmpaque)
+            .ThenInclude(pe => pe.Empaque)
         .AsQueryable();
 
 
@@ -445,18 +466,24 @@ namespace Api_comerce.Services.Products
                                  Rating = p.Rating ?? 0,
                                  Acumulador = p.Acumulador ?? false,
                                  ProductoIdAcumulador = p.ProductoIdAcumulador ?? 0,
+                                 CategoriaTipo = p.CategoriaTipo ?? "Default",
                              },
 
-                             Empaque = new EmpaqueDto
+                             Empaque = pe.Empaque != null ? new EmpaqueDto
                              {
-                                 Id = pe.Empaque?.Id ?? 0,
-                                 Codigo = pe.Empaque?.CodigoEmpaque ?? "NO DATO"
-                             },
+                                 Id = pe.Empaque.Id,
+                                 Empaque = pe.Empaque.Empaque,
+                                 Contenido = pe.Empaque.Contenido,
+                                 Sincronizado = pe.Empaque.Sincronizado,
+                                 CodigoEmpaque = pe.Empaque.CodigoEmpaque,
+                                 Codigo = pe.Empaque.CodigoEmpaque ?? "NO DATO"
+                             } : null,
 
                              ImagenProducto = pe.ImagenProducto != null && pe.ImagenProducto.Any()
                                 ? pe.ImagenProducto
                                     .Select(img => new ImageDto
                                     {
+                                        Id = img.Id,
                                         Name = System.IO.Path.GetFileName(img.Url),
                                         Url = img.Url,
                                         Width = (int)(img.Width ?? 800),
@@ -464,6 +491,7 @@ namespace Api_comerce.Services.Products
                                         Formats = new FormatDto()
                                     }).ToList()
                                 : new List<ImageDto>(),
+                             
                          }))
                          .ToList()
             }).ToList();
@@ -607,7 +635,7 @@ namespace Api_comerce.Services.Products
 
 
         }
-
+        //ya aya que quitarlo
         public async Task<List<ProductoEcommerceDto>> GetProductosNameContainsAsync(string? name_contains = null)
         {
             var baseUrl = "";
@@ -619,11 +647,12 @@ namespace Api_comerce.Services.Products
 
             var query = _context.ProductosEmpaque
                 .Include(pe => pe.Producto)
-                    .ThenInclude(p => p.Linea)
-                .Include(pe => pe.Producto)
-                    .ThenInclude(p => p.MarcaProducto)
-                .Include(pe => pe.Empaque)
-                    .ThenInclude(e => e.UnidadSAT)
+        .ThenInclude(p => p.Linea)
+    .Include(pe => pe.Producto)
+        .ThenInclude(p => p.MarcaProducto)
+    .Include(pe => pe.Empaque)
+        .ThenInclude(e => e.UnidadSAT)
+    .Include(pe => pe.ImagenProducto)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(name_contains))
@@ -643,33 +672,49 @@ namespace Api_comerce.Services.Products
                 Name = $"{p?.Codigo ?? "SIN-COD"} - {p.Producto.NombreProducto ?? "NO DATO"} - {p?.Empaque?.UnidadSAT?.UnidadSat ?? "SIN UNIDAD"}",
                 Featured = false,
                 Price = p?.PVenta ?? 0,
-                SalePrice = null,
+                SalePrice = 0,
                 OnSale = false,
                 Slug = p.Producto.Slug ?? "no-dato",
                 IsStock = true,
                 RatingCount = p.Producto.Rating ?? 0,
                 Description = p.Producto.Descripcion ?? "NO DATO",
                 ShortDescription = p.Producto.DescripcionBreve ?? "NO DATO",
+                CategoriaTipo = p.Producto.CategoriaTipo ?? "Default",
                 CreatedAt = p.Producto.CreatedAt,
                 UpdatedAt = p.Producto.UpdatedAt,
 
-                Sizes = p.Producto.ProductosEmpaque != null
-                    ? p.Producto.ProductosEmpaque.Select(e => new EmpaqueDto
+                Sizes = new List<EmpaqueDto>
                     {
-                        Id = e.EmpaqueId,
-                        Codigo = e.Codigo ?? "NO DATO",
-                        PCompra = e.PCompra ?? 0,
-                        PVenta = e.PVenta ?? 0,
-                        Descuento = e.Descuento ?? 0,
-                        Activo = e.Activo ?? false,
-                        UnidadSat = e.Empaque?.UnidadSAT != null ? new UnidadSatDto
+                        new EmpaqueDto
                         {
-                            Id = e.Empaque.UnidadSAT.Id,
-                            ClaveUnidad = e.Empaque.UnidadSAT.ClaveUnidad ?? "NO DATO",
-                            UnidadSat = e.Empaque.UnidadSAT.UnidadSat ?? "NO DATO"
-                        } : null
-                    }).ToList()
-                    : new List<EmpaqueDto>(),
+                            Id = p.EmpaqueId,
+                            Empaque = p.Empaque.Empaque,
+                            Contenido = p.Empaque.  Contenido,
+                            Sincronizado = p.Empaque.Sincronizado,
+                            CodigoEmpaque = p.Empaque.CodigoEmpaque,
+                            Codigo = p.Codigo ?? "NO DATO",
+                            PCompra = p.PCompra ?? 0,
+                            PVenta = p.PVenta ?? 0,
+                            Descuento = p.Descuento ?? 0,
+                            Activo = p.Activo ?? false,
+                            FechaCreado = p.Empaque.FechaCreado,
+                            UnidadSat = p.Empaque?.UnidadSAT != null ? new UnidadSatDto
+                            {
+                                Id = p.Empaque.UnidadSAT.Id,
+                                ClaveUnidad = p.Empaque.UnidadSAT.ClaveUnidad ?? "NO DATO",
+                                UnidadSat = p.Empaque.UnidadSAT.UnidadSat ?? "NO DATO"
+                            } : null
+                        }
+                    },
+                SizesEmpaque= new sizeEmpaqueDto {
+                    Id= p.Empaque.Id,
+                    Empaque = p.Empaque.Empaque,
+                    Contenido = p.Empaque.  Contenido,
+                    Sincronizado = p.Empaque.Sincronizado,
+                    CodigoEmpaque = p.Empaque.CodigoEmpaque,
+                    UnidadId = p.Empaque.UnidadId
+
+                },
 
                 Colors = new List<string> { "#eb7b8b", "#000000", "#927764" }, // Estático por ahora
 
@@ -687,7 +732,8 @@ namespace Api_comerce.Services.Products
 
                 Images =  p.ImagenProducto != null && p.ImagenProducto.Any()
                         ? p.ImagenProducto.Select(img => new ImageDto
-                        {
+                        { 
+                            Id= img.Id,
                             Name = System.IO.Path.GetFileName(img.Url),
                             Url = img.Url,
                             Width = (int)img.Width,
@@ -695,8 +741,8 @@ namespace Api_comerce.Services.Products
                             Formats = new FormatDto()
                         }).ToList()
                         : new List<ImageDto>(),
-                Thumbnail = MapImage(p.ImagenProducto.ToList(), "front"),
-                ThumbnailBack = MapImage(p.ImagenProducto.ToList(), "back"),
+                Thumbnail = MapImage(p.ImagenProducto?.ToList() ?? new List<ImagenProducto>(), "front"),
+                ThumbnailBack = MapImage(p.ImagenProducto?.ToList() ?? new List<ImagenProducto>(), "back"),
 
 
                 ProductCategories = p.Producto.Linea != null
