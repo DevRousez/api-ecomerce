@@ -512,6 +512,10 @@ namespace Api_comerce.Migrations
                     b.Property<bool?>("Acumulador")
                         .HasColumnType("bit");
 
+                    b.Property<string>("CategoriaTipo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2");
@@ -563,6 +567,31 @@ namespace Api_comerce.Migrations
                     b.HasIndex("ProductoSatId");
 
                     b.ToTable("Productos");
+                });
+
+            modelBuilder.Entity("Api_comerce.Models.ProductosCaracteristicas", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("FechaCreado")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ProductosId")
+                        .HasColumnType("int");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("ProductosId");
+
+                    b.ToTable("ProductosCaracteristicas");
                 });
 
             modelBuilder.Entity("Api_comerce.Models.ProductosEmpaque", b =>
@@ -758,6 +787,13 @@ namespace Api_comerce.Migrations
                     b.Navigation("ProductoSat");
                 });
 
+            modelBuilder.Entity("Api_comerce.Models.ProductosCaracteristicas", b =>
+                {
+                    b.HasOne("Api_comerce.Models.Productos", null)
+                        .WithMany("ProductosCaracteristicas")
+                        .HasForeignKey("ProductosId");
+                });
+
             modelBuilder.Entity("Api_comerce.Models.ProductosEmpaque", b =>
                 {
                     b.HasOne("Api_comerce.Models.Empaques", "Empaque")
@@ -779,7 +815,7 @@ namespace Api_comerce.Migrations
 
             modelBuilder.Entity("Api_comerce.Models.WishlistItem", b =>
                 {
-                    b.HasOne("Api_comerce.Models.ProductosEmpaque", "Product")
+                    b.HasOne("Api_comerce.Models.ProductosEmpaque", "ProductosEmpaque")
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -791,7 +827,7 @@ namespace Api_comerce.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Product");
+                    b.Navigation("ProductosEmpaque");
 
                     b.Navigation("Wishlist");
                 });
@@ -818,6 +854,8 @@ namespace Api_comerce.Migrations
 
             modelBuilder.Entity("Api_comerce.Models.Productos", b =>
                 {
+                    b.Navigation("ProductosCaracteristicas");
+
                     b.Navigation("ProductosEmpaque");
                 });
 
