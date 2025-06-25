@@ -5,10 +5,10 @@ namespace Api_comerce.Services.Wishlists
 {
     public interface IWishlistService
     {
-        Task<WishlistResponseDto?> GetWishlistByUserAsync(int userId);
-        Task<bool> CreateWishlistIfNotExistsAsync(int userId);
-        Task<bool> AddProductToWishlistAsync(int userId, int productId);
-        Task<bool> RemoveProductFromWishlistAsync(int userId, int productId);
+        Task<List<WishlistItemDto>> GetWishlistAsync(int userId);
+        Task<List<WishlistItemDto>> AddItemsToWishlistAsync(int userId, List<WishlistItemDto> items);
+        Task<bool> RemoveItemAsync(int userId, int productId);
         Task<bool> ClearWishlistAsync(int userId);
+        Task<bool> UpdateWishlistItemAsync(int userId, int productId, int quantity);
     }
 }
