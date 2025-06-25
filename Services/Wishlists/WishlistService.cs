@@ -15,214 +15,184 @@ namespace Api_comerce.Services.Wishlists
             _context = context;
         }
 
-        public async Task<WishlistResponseDto?> GetWishlistByUserAsync(int userId)
+        public async Task<List<WishlistItemDto>> GetWishlistAsync(int userId)
         {
-            var wishlist = await _context.Wishlists
-     .Include(w => w.WishlistItems)
-         .ThenInclude(wi => wi.ProductosEmpaque)
-             .ThenInclude(pe => pe.ImagenProducto) 
-     .Include(w => w.WishlistItems)
-         .ThenInclude(wi => wi.ProductosEmpaque)
-             .ThenInclude(pe => pe.Producto) 
-     .FirstOrDefaultAsync(w => w.UserId == userId);
+            var items = await _context.WishlistItems
+     .Where(wi => wi.UserId == userId)
+     .Select(wi => new WishlistItemDto
+     {
+         Id = wi.Id,
+         UserId = wi.UserId,
+         ProductEmpaqueId = wi.ProductId,
+         Quantity = wi.Quantity,
+         Price = (decimal)wi.ProductEmpaque.PVenta,
+         Subtotalproduc = wi.Quantity * wi.Price,
+         CreatedAt = wi.CreatedAt,
+         UpdatedAt = wi.UpdatedAt,
+         User = new AccountsDtocs
+         {
+             Id = wi.User.Id,
+             AccountTypeId = wi.User.AccountTypeId,
+             FullName = wi.User.FullName,
+             Email = wi.User.Email,
+             GoogleId = wi.User.GoogleId,
+             Picture = wi.User.Picture,
+             IsActive = wi.User.IsActive,
+             CreatedAt = wi.User.CreatedAt,
+             UpdatedAt = wi.User.UpdatedAt,
+         },
+         ProductoEmpaque = new ProductoEmpaqueDto
+         {
+             ProductoEmpaqueId = wi.ProductEmpaque.Id,
+             ProductoId = wi.ProductEmpaque.ProductoId,
+             EmpaqueId = wi.ProductEmpaque.EmpaqueId,
+             Codigo = wi.ProductEmpaque.Codigo,
+             PCompra = wi.ProductEmpaque.PCompra,
+             PVenta = wi.ProductEmpaque.PVenta,
+             Descuento = (float?)wi.ProductEmpaque.Descuento,
+             Activo = wi.ProductEmpaque.Activo,
+             ImagenProducto = wi.ProductEmpaque.ImagenProducto != null && wi.ProductEmpaque.ImagenProducto.Any()
+                 ? wi.ProductEmpaque.ImagenProducto.Select(img => new ImageDto
+                 {
+                     Name = System.IO.Path.GetFileName(img.Url),
+                     Url = img.Url,
+                     Width = (int)(img.Width ?? 800),
+                     Height = (int)(img.Height ?? 800),
+                     Formats = new FormatDto()
+                 }).ToList()
+                 : new List<ImageDto>(),
+             Empaque = new EmpaqueDto
+             {
+                 Id = wi.ProductEmpaque.Empaque.Id,
+                 Empaque = wi.ProductEmpaque.Empaque.Empaque,
+                 Contenido = wi.ProductEmpaque.Empaque.Contenido,
+                 Sincronizado = wi.ProductEmpaque.Empaque.Sincronizado,
+                 CodigoEmpaque = wi.ProductEmpaque.Empaque.CodigoEmpaque,
+                 FechaCreado = wi.ProductEmpaque.Empaque.FechaCreado,
+                 UnidadSat = null
+             },
+             Producto = new ProductoDto
+             {
+                 ProductId = wi.ProductEmpaque.Producto.Id,
+                 ProductoSatId = wi.ProductEmpaque.Producto.ProductoSatId,
+                 Prefijo = wi.ProductEmpaque.Producto.Prefijo,
+                 NombreProducto = wi.ProductEmpaque.Producto.NombreProducto,
+                 Slug = wi.ProductEmpaque.Producto.Slug,
+                 Rating = wi.ProductEmpaque.Producto.Rating,
+                 Acumulador = wi.ProductEmpaque.Producto.Acumulador,
+                 ProductoIdAcumulador = wi.ProductEmpaque.Producto.ProductoIdAcumulador,
+                 Linea = new LineaDto
+                 {
+                     Id = (int)wi.ProductEmpaque.Producto.LineaId,
+                     Linea = wi.ProductEmpaque.Producto.Linea.Linea,
+                     Slug = wi.ProductEmpaque.Producto.Linea.Slug,
+                     FechaCreado = wi.ProductEmpaque.Producto.CreatedAt
+                 },
+                 MarcaProducto = new MarcaProductoDto
+                 {
+                     Id = wi.ProductEmpaque.Producto.MarcaProducto.Id,
+                     Marca = wi.ProductEmpaque.Producto.MarcaProducto.Marca,
+                     Slug = wi.ProductEmpaque.Producto.MarcaProducto.Slug
+                 }
+             }
+         }
+     })
+     .ToListAsync();
 
-            if (wishlist == null) return null;
+            return items;
+        }
 
-            return new WishlistResponseDto
+        public async Task<List<WishlistItemDto>> AddItemsToWishlistAsync(int userId, List<WishlistItemDto> items)
+        {
+            if (items == null || !items.Any())
+                return new List<WishlistItemDto>();
+
+            var productIds = items.Select(i => i.ProductEmpaqueId).ToList();
+
+            var products = await _context.ProductosEmpaque
+                .Include(p => p.ImagenProducto)
+                .Where(p => productIds.Contains(p.Id))
+                .ToDictionaryAsync(p => p.Id);
+
+            // Obtiene los WishlistItems existentes del usuario para esos productos
+            var existingItems = await _context.WishlistItems
+                .Where(wi => wi.UserId == userId && productIds.Contains(wi.ProductId))
+                .ToDictionaryAsync(wi => wi.ProductId);
+
+            var now = DateTime.UtcNow;
+
+            foreach (var item in items)
             {
-                WishlistId = wishlist.Id,
-                Items = wishlist.WishlistItems.Select(item => new WishlistProductDto
+                if (!products.TryGetValue(item.ProductEmpaqueId, out var product))
+                    continue;
+
+                if (!existingItems.ContainsKey(item.ProductEmpaqueId))
                 {
-                    ProductEmpaqueId = item.ProductId,
-                    ProductName = item.ProductosEmpaque?.Producto.NombreProducto ?? "NO DATO",
-                    Quantity = item.Quantity,
-                    ProductoEmpaque = new ProductoEmpaqueDto
+                    var newItem = new WishlistItem
                     {
-                        ProductoEmpaqueId = item.ProductosEmpaque.Id,
-                        ProductoId = item.ProductosEmpaque.ProductoId,
-                        EmpaqueId= item.ProductosEmpaque.EmpaqueId,
-                        Codigo = item.ProductosEmpaque?.Codigo ,
-                          PVenta=item.ProductosEmpaque.PVenta,
-                       Descuento= (float?)item.ProductosEmpaque.Descuento,
-                        Activo= item.ProductosEmpaque.Activo ,
-                        Producto = item.ProductosEmpaque.Producto != null?
-                        new ProductoDto
-                        {
-                          ProductId =item.ProductosEmpaque.Producto.Id,
-                                ProductoSatId =item.ProductosEmpaque.Producto.ProductoSatId,
-                                Prefijo = item.ProductosEmpaque.Producto.Prefijo,
-                                     NombreProducto = item.ProductosEmpaque.Producto.NombreProducto,
-                            Descripcion = item.ProductosEmpaque.Producto.Descripcion,
-                            DescripcionBreve = item.ProductosEmpaque.Producto.DescripcionBreve,
-                            Slug = item.ProductosEmpaque.Producto.Slug,
-                            Rating = item.ProductosEmpaque.Producto.Rating,
-                            Acumulador = item.ProductosEmpaque.Producto.Acumulador,
-                            ProductoIdAcumulador = item.ProductosEmpaque.Producto.ProductoIdAcumulador,
-                        } : new ProductoDto(),
-
-                       Empaque= item.ProductosEmpaque.Empaque != null
-                        ? new EmpaqueDto
-                            {
-                                Id = item.ProductosEmpaque.Empaque.Id,
-                                Codigo = item.ProductosEmpaque.Empaque.CodigoEmpaque ?? "NO DATO",
-                                PCompra = item.ProductosEmpaque.PCompra,
-                                PVenta = item.ProductosEmpaque.PVenta,
-                                Descuento = item.ProductosEmpaque.Descuento ?? 0,
-                                Activo = item.ProductosEmpaque.Activo ?? false,
-                                UnidadSat = item.ProductosEmpaque.Empaque.UnidadSAT != null
-                                    ? new UnidadSatDto
-                                    {
-                                        Id = item.ProductosEmpaque.Empaque.UnidadSAT.Id,
-                                        ClaveUnidad = item.ProductosEmpaque.Empaque.UnidadSAT.ClaveUnidad ?? "NO DATO",
-                                        UnidadSat = item.ProductosEmpaque.Empaque.UnidadSAT.UnidadSat ?? "NO DATO"
-                                    }
-                                    : null
-                           }
-                        : new EmpaqueDto(),
-
-                        ImagenProducto = item.ProductosEmpaque.ImagenProducto?.Any() == true
-                        ? item.ProductosEmpaque.ImagenProducto.Select(img => new ImageDto
-                        {
-                            Name = System.IO.Path.GetFileName(img.Url),
-                            Url = img.Url,
-                            Width = (int)img.Width,
-                            Height = (int)img.Height,
-                            Formats = new FormatDto()
-                        }).ToList()
-                        : new List<ImageDto>(),
-                    }
-                }).ToList()
-            };
-        }
-
-        public async Task<bool> CreateWishlistIfNotExistsAsync(int userId)
-        {
-            var wishlist = await _context.Wishlists.FirstOrDefaultAsync(w => w.UserId == userId);
-            if (wishlist != null)
-                return false;
-
-            wishlist = new Wishlist
-            {
-                UserId = userId,
-                CreatedAt = DateTime.UtcNow
-            };
-
-            _context.Wishlists.Add(wishlist);
-            await _context.SaveChangesAsync();
-            return true;
-        }
-
-        public async Task<bool> AddProductToWishlistAsync(int userId, int productId)
-        {
-
-            var productoExiste = await _context.ProductosEmpaque.AnyAsync(p => p.Id == productId);
-            if (!productoExiste)
-            {
-                Console.Write("Producto empaque no existe en BD");
-                return false;
-            }
-            var wishlist = await _context.Wishlists
-                .Include(w => w.WishlistItems)
-                .FirstOrDefaultAsync(w => w.UserId == userId);
-
-            if (wishlist == null)
-            {
-                await CreateWishlistIfNotExistsAsync(userId);
-                wishlist = await _context.Wishlists
-                    .Include(w => w.WishlistItems)
-                    .FirstOrDefaultAsync(w => w.UserId == userId);
+                        UserId = userId,
+                        ProductId = item.ProductEmpaqueId,
+                        Quantity = item.Quantity,
+                        Price = (decimal)product.PVenta,
+                        CreatedAt = now,
+                        UpdatedAt = now
+                    };
+                    _context.WishlistItems.Add(newItem);
+                }
+                else
+                {
+                    // Opcional: actualizar cantidad si ya existe
+                    var existing = existingItems[item.ProductEmpaqueId];
+                    existing.Quantity += item.Quantity;
+                    existing.UpdatedAt = now;
+                }
             }
 
-            if (wishlist.WishlistItems.Any(wi => wi.ProductId == productId))
-                return false; // Ya existe
-
-            wishlist.WishlistItems.Add(new WishlistItem
-            {
-                ProductId = productId,
-                Quantity =1
-               
-            });
-
             await _context.SaveChangesAsync();
-            return true;
+
+            return await GetWishlistAsync(userId);
         }
 
-        public async Task<bool> RemoveProductFromWishlistAsync(int userId, int productId)
+        public async Task<bool> RemoveItemAsync(int userId, int productId)
         {
-            var wishlist = await _context.Wishlists
-                .Include(w => w.WishlistItems)
-                .FirstOrDefaultAsync(w => w.UserId == userId);
+            var item = await _context.WishlistItems
+           .FirstOrDefaultAsync(w => w.UserId == userId && w.ProductId == productId);
 
-            if (wishlist == null)
-                return false;
+                if (item == null)
+                    return false;
 
-            var item = wishlist.WishlistItems.FirstOrDefault(wi => wi.ProductId == productId);
-            if (item == null)
-                return false;
+                _context.WishlistItems.Remove(item);
+                await _context.SaveChangesAsync();
 
-            wishlist.WishlistItems.Remove(item);
-            await _context.SaveChangesAsync();
-            return true;
+                return true;
         }
 
         public async Task<bool> ClearWishlistAsync(int userId)
         {
-            var wishlist = await _context.Wishlists
-                .Include(w => w.WishlistItems)
-                .FirstOrDefaultAsync(w => w.UserId == userId);
+            var wishlistItem = await _context.WishlistItems
+               .FirstOrDefaultAsync(w => w.UserId == userId);
 
-            if (wishlist == null)
+            if (wishlistItem == null)
                 return false;
 
-            wishlist.WishlistItems.Clear();
+            _context.WishlistItems.RemoveRange(wishlistItem);
             await _context.SaveChangesAsync();
             return true;
         }
-        private static ImageDto MapImage(List<ImagenProducto> imagenes, string label)
+
+        public async Task<bool> UpdateWishlistItemAsync(int userId, int productId, int quantity)
         {
-            var baseUrl = ""; // Defínelo si usas dominio
+            var item = await _context.WishlistItems
+             .FirstOrDefaultAsync(w => w.UserId == userId && w.ProductId == productId);
 
-            var grouped = imagenes
-                .Where(img => img.Label == label)
-                .GroupBy(img => img.Type)
-                .ToDictionary(g => g.Key, g => g.FirstOrDefault());
+            if (item == null)
+                return false;
 
-            return new ImageDto
-            {
-                Id = grouped["original"].Id,
-                Name = grouped.ContainsKey("original") ? System.IO.Path.GetFileName(grouped["original"].Url) : "no-image.jpg",
-                Url = grouped.ContainsKey("original") ? grouped["original"].Url : $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg",
-                Width = (int)(grouped.ContainsKey("original") ? grouped["original"].Width : 800),
-                Height = (int)(grouped.ContainsKey("original") ? grouped["original"].Height : 800),
-                Formats = new FormatDto
-                {
-                    Thumbnail = grouped.ContainsKey("thumbnail") ? new FormatItemDto
-                    {
+            item.Quantity = quantity;
+            item.UpdatedAt = DateTime.UtcNow;
 
-                        Url = grouped["thumbnail"].Url,
-                        Width = (int)(grouped["thumbnail"].Width),
-                        Height = (int)(grouped["thumbnail"].Height)
-                    } : null,
-                    Small = grouped.ContainsKey("small") ? new FormatItemDto
-                    {
-                        Url = grouped["small"].Url,
-                        Width = (int)(grouped["small"].Width),
-                        Height = (int)(grouped["small"].Height)
-                    } : null,
-                    Medium = grouped.ContainsKey("medium") ? new FormatItemDto
-                    {
-                        Url = grouped["medium"].Url,
-                        Width = (int)(grouped["medium"].Width),
-                        Height = (int)(grouped["medium"].Height)
-                    } : null,
-                    Large = grouped.ContainsKey("large") ? new FormatItemDto
-                    {
-                        Url = grouped["large"].Url,
-                        Width = (int)(grouped["large"].Width),
-                        Height = (int)(grouped["large"].Height)
-                    } : null,
-                }
-            };
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

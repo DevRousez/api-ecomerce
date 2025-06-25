@@ -22,7 +22,7 @@ namespace Api_comerce.Data
         public DbSet<CartItem> CartItems { get; set; }
         public DbSet<Orden> Orden { get; set; }
         public DbSet<OrdenDetalle> OrdenDetalle { get; set; }
-        public DbSet<Wishlist> Wishlists { get; set; }
+
         public DbSet<WishlistItem> WishlistItems { get; set; }
         public DbSet<ProductosCaracteristicas> ProductosCaracteristicas { get; set; }
         public DbSet<ProductosComentarios> ProductosComentarios { get; set; }
@@ -87,14 +87,16 @@ namespace Api_comerce.Data
 
 
             modelBuilder.Entity<WishlistItem>()
-            .HasOne(w => w.Wishlist)
-            .WithMany(w => w.WishlistItems)
-            .HasForeignKey(w => w.WishlistId);
+      .HasOne(wi => wi.User)
+      .WithMany() 
+      .HasForeignKey(wi => wi.UserId)
+      .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<WishlistItem>()
-                .HasOne(wi => wi.ProductosEmpaque)
+                .HasOne(wi => wi.ProductEmpaque)
                 .WithMany() 
-                .HasForeignKey(wi => wi.ProductId);
+                .HasForeignKey(wi => wi.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
 
         }
 

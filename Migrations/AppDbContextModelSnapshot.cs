@@ -594,6 +594,39 @@ namespace Api_comerce.Migrations
                     b.ToTable("ProductosCaracteristicas");
                 });
 
+            modelBuilder.Entity("Api_comerce.Models.ProductosComentarios", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Calificacion")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Comentario")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("FechaCreado")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ProductoId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountId");
+
+                    b.HasIndex("ProductoId");
+
+                    b.ToTable("ProductosComentarios");
+                });
+
             modelBuilder.Entity("Api_comerce.Models.ProductosEmpaque", b =>
                 {
                     b.Property<int>("Id")
@@ -657,7 +690,7 @@ namespace Api_comerce.Migrations
                     b.ToTable("UnidadesSat");
                 });
 
-            modelBuilder.Entity("Api_comerce.Models.Wishlist", b =>
+            modelBuilder.Entity("Api_comerce.Models.WishlistItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -668,6 +701,15 @@ namespace Api_comerce.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -676,31 +718,9 @@ namespace Api_comerce.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Wishlists");
-                });
-
-            modelBuilder.Entity("Api_comerce.Models.WishlistItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WishlistId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
                     b.HasIndex("ProductId");
 
-                    b.HasIndex("WishlistId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("WishlistItems");
                 });
@@ -794,6 +814,25 @@ namespace Api_comerce.Migrations
                         .HasForeignKey("ProductosId");
                 });
 
+            modelBuilder.Entity("Api_comerce.Models.ProductosComentarios", b =>
+                {
+                    b.HasOne("Api_comerce.Models.Accounts", "Account")
+                        .WithMany()
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Api_comerce.Models.Productos", "Producto")
+                        .WithMany()
+                        .HasForeignKey("ProductoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+
+                    b.Navigation("Producto");
+                });
+
             modelBuilder.Entity("Api_comerce.Models.ProductosEmpaque", b =>
                 {
                     b.HasOne("Api_comerce.Models.Empaques", "Empaque")
@@ -815,21 +854,21 @@ namespace Api_comerce.Migrations
 
             modelBuilder.Entity("Api_comerce.Models.WishlistItem", b =>
                 {
-                    b.HasOne("Api_comerce.Models.ProductosEmpaque", "ProductosEmpaque")
+                    b.HasOne("Api_comerce.Models.ProductosEmpaque", "ProductEmpaque")
                         .WithMany()
                         .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Api_comerce.Models.Accounts", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Api_comerce.Models.Wishlist", "Wishlist")
-                        .WithMany("WishlistItems")
-                        .HasForeignKey("WishlistId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("ProductEmpaque");
 
-                    b.Navigation("ProductosEmpaque");
-
-                    b.Navigation("Wishlist");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Api_comerce.Models.Accounts", b =>
@@ -862,11 +901,6 @@ namespace Api_comerce.Migrations
             modelBuilder.Entity("Api_comerce.Models.ProductosEmpaque", b =>
                 {
                     b.Navigation("ImagenProducto");
-                });
-
-            modelBuilder.Entity("Api_comerce.Models.Wishlist", b =>
-                {
-                    b.Navigation("WishlistItems");
                 });
 #pragma warning restore 612, 618
         }

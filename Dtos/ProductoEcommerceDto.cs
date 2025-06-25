@@ -21,7 +21,7 @@ namespace Api_comerce.Dtos
         public DateTime? UpdatedAt { get; set; }
 
         public List<EmpaqueDto> Sizes { get; set; }
-        public sizeEmpaqueDto SizesEmpaque { get; set; }
+        //public sizeEmpaqueDto SizesEmpaque { get; set; }
         public List<string> Colors { get; set; }
         public List<MarcaProductoDto> Badges { get; set; }
         public List<ImageDto> Images { get; set; } = new();
