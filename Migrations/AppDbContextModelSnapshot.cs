@@ -190,6 +190,57 @@ namespace Api_comerce.Migrations
                     b.ToTable("Accounts");
                 });
 
+            modelBuilder.Entity("Api_comerce.Models.AccountsDirecciones", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Calle")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Ciudad")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CodigoPostal")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("EsPredeterminada")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Pais")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Telefono")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountId");
+
+                    b.ToTable("AccountsDirecciones");
+                });
+
             modelBuilder.Entity("Api_comerce.Models.AccountsTypes", b =>
                 {
                     b.Property<int>("Id")
@@ -282,6 +333,70 @@ namespace Api_comerce.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("CartItems");
+                });
+
+            modelBuilder.Entity("Api_comerce.Models.DatosFacturacion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Calle")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Ciudad")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CodigoPostal")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MetodoPago")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Pais")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RFC")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RazonSocial")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegimenFiscal")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UsoCFDI")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountId");
+
+                    b.ToTable("DatosFacturacion");
                 });
 
             modelBuilder.Entity("Api_comerce.Models.Empaques", b =>
@@ -419,13 +534,15 @@ namespace Api_comerce.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("AccountsDireccionId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Correo")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Direccion")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("DatosFacturacionId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Estado")
                         .IsRequired()
@@ -442,11 +559,15 @@ namespace Api_comerce.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Telefono")
+                    b.Property<string>("TelefonoPrincipal")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AccountsDireccionId");
+
+                    b.HasIndex("DatosFacturacionId");
 
                     b.ToTable("Orden");
                 });
@@ -736,6 +857,17 @@ namespace Api_comerce.Migrations
                     b.Navigation("AccountsTypes");
                 });
 
+            modelBuilder.Entity("Api_comerce.Models.AccountsDirecciones", b =>
+                {
+                    b.HasOne("Api_comerce.Models.Accounts", "Account")
+                        .WithMany()
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+                });
+
             modelBuilder.Entity("Api_comerce.Models.CartItem", b =>
                 {
                     b.HasOne("Api_comerce.Models.ProductosEmpaque", "ProductEmpaque")
@@ -753,6 +885,17 @@ namespace Api_comerce.Migrations
                     b.Navigation("ProductEmpaque");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Api_comerce.Models.DatosFacturacion", b =>
+                {
+                    b.HasOne("Api_comerce.Models.Accounts", "Account")
+                        .WithMany()
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
                 });
 
             modelBuilder.Entity("Api_comerce.Models.Empaques", b =>
@@ -773,6 +916,21 @@ namespace Api_comerce.Migrations
                         .IsRequired();
 
                     b.Navigation("ProductEmpaque");
+                });
+
+            modelBuilder.Entity("Api_comerce.Models.Orden", b =>
+                {
+                    b.HasOne("Api_comerce.Models.AccountsDirecciones", "AccountsDireccion")
+                        .WithMany()
+                        .HasForeignKey("AccountsDireccionId");
+
+                    b.HasOne("Api_comerce.Models.DatosFacturacion", "DatosFacturacion")
+                        .WithMany()
+                        .HasForeignKey("DatosFacturacionId");
+
+                    b.Navigation("AccountsDireccion");
+
+                    b.Navigation("DatosFacturacion");
                 });
 
             modelBuilder.Entity("Api_comerce.Models.OrdenDetalle", b =>

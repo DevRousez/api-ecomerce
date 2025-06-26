@@ -22,6 +22,8 @@ namespace Api_comerce.Data
         public DbSet<CartItem> CartItems { get; set; }
         public DbSet<Orden> Orden { get; set; }
         public DbSet<OrdenDetalle> OrdenDetalle { get; set; }
+        public DbSet<DatosFacturacion> DatosFacturacion { get; set; }
+        public DbSet<AccountsDirecciones> AccountsDirecciones { get; set; }
 
         public DbSet<WishlistItem> WishlistItems { get; set; }
         public DbSet<ProductosCaracteristicas> ProductosCaracteristicas { get; set; }

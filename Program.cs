@@ -13,6 +13,8 @@ using Api_comerce.Services.Cart;
 using Microsoft.OpenApi.Models;
 using Api_comerce.Services.Checkout;
 using Api_comerce.Services.Wishlists;
+using Api_comerce.Services.AccountsDatosFacturacion;
+using Api_comerce.Services.AccountsDirecciones;
 
 
 
@@ -34,6 +36,8 @@ builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<ICheckoutService, CheckoutService>();
 builder.Services.AddScoped<IWishlistService, WishlistService>();
+builder.Services.AddScoped<IDatosFacturacionServicie, DatosFacturacionService>();
+builder.Services.AddScoped<IAccountsDireccionesServicie, AccountsDireccionesServicie>();
 
 
 builder.Services.AddCors(options =>
