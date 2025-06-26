@@ -2,17 +2,13 @@
 {
     public class CheckoutRequest
     {
-        // Datos del cliente
-        public string Nombre { get; set; }
-        public string Apellidos { get; set; }
-        public string Direccion { get; set; }
+        public int AccountsDireccionId { get; set; }  // Obligatorio
+        public int? DatosFacturacionId { get; set; }  // Opcional
+
+        public string NombreCompleto { get; set; } // defaulkt de user
         public string Correo { get; set; }
-        public string Telefono { get; set; }
+        public MetodoPagoDto MetodoPago { get; set; }  // Ej: { "Tipo": "Tarjeta" }
 
-        // Método de pago seleccionado (puede ser "efectivo", "tarjeta", etc.)
-        public MetodoPagoDto MetodoPago { get; set; }
-
-        // Productos en el carrito
         public List<CartItemDto> Items { get; set; } = new();
     }
 

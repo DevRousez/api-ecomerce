@@ -36,7 +36,16 @@ namespace Api_comerce.Services.ProductosComentarios
 
         public async Task<ProductosComentariosDTO> CreateAsync(ProductosComentariosDTO dto)
         {
-            var nuevo = new Api_comerce.Models. ProductosComentarios
+            bool comproProducto = await _context.OrdenDetalle
+     .Include(od => od.Orden)
+     .AnyAsync(od => od.Orden.Id == dto.AccountId && od.ProductoId == dto.ProductoId);
+
+            if (!comproProducto)
+            {
+                return null; // BadRequest(new { success = false, message = "Solo puedes comentar productos que hayas comprado." }); 
+            }
+
+            var nuevo = new Api_comerce.Models.ProductosComentarios
             {
                 ProductoId = dto.ProductoId,
                 AccountId = dto.AccountId,
