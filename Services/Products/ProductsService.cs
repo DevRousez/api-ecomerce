@@ -296,9 +296,9 @@ namespace Api_comerce.Services.Products
             
                 .ThenInclude(p => p.Linea)
             .Include(pe => pe.Producto)
-                .ThenInclude(p => p.MarcaProducto)
+               .ThenInclude(p => p.MarcaProducto)
             .Include(pe => pe.Empaque)
-                .ThenInclude(e => e.UnidadSAT)
+               .ThenInclude(e => e.UnidadSAT)
                  .Include(pe => pe.ImagenProducto)
                   .Skip(offset)
       .Take(limit)

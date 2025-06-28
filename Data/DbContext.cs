@@ -72,6 +72,27 @@ namespace Api_comerce.Data
                 .WithMany()
                 .HasForeignKey(pe => pe.EmpaqueId);
 
+            modelBuilder.Entity<OrdenDetalle>()
+        .HasMany(od => od.ProductosEmpaque)
+        .WithMany() // <-- sin propiedad inversa
+        .UsingEntity<Dictionary<string, object>>(
+            "OrdenDetalleProductoEmpaque", // Nombre de la tabla intermedia
+            j => j
+                .HasOne<ProductosEmpaque>()
+                .WithMany()
+                .HasForeignKey("ProductosEmpaqueId")
+                .OnDelete(DeleteBehavior.Cascade),
+            j => j
+                .HasOne<OrdenDetalle>()
+                .WithMany()
+                .HasForeignKey("OrdenDetalleId")
+                .OnDelete(DeleteBehavior.Cascade),
+            j =>
+            {
+                j.HasKey("OrdenDetalleId", "ProductosEmpaqueId");
+                j.ToTable("OrdenDetalleProductoEmpaque");
+            }
+        );
 
             //carrito 
 

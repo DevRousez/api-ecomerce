@@ -11,7 +11,7 @@ namespace Api_comerce.Models
 
         public int OrdenId { get; set; }
         [ForeignKey("OrdenId")]
-        public Orden Orden { get; set; }
+        public Orden OrdenP { get; set; }
 
         public int ProductoId { get; set; }
         public int Cantidad { get; set; }
