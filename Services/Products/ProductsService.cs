@@ -41,6 +41,8 @@ namespace Api_comerce.Services.Products
      .Include(pe => pe.Empaque)
          .ThenInclude(e => e.UnidadSAT)
      .Include(pe => pe.ImagenProducto) // <- esta línea es la clave nueva
+      .Include(pe => pe.Producto)
+                  .ThenInclude(p => p.ProductosCaracteristicas)
      .ToListAsync();
               
 
@@ -140,7 +142,17 @@ namespace Api_comerce.Services.Products
                     Slug = p.Producto.MarcaProducto.Slug
                 }
                     }
-                    : new List<MarcaProductoDto>()
+                    : new List<MarcaProductoDto>(),
+                ProductosCaracteristicas = p.Producto.ProductosCaracteristicas != null
+                                        ? p.Producto.ProductosCaracteristicas.Select(c => new ProductosCaracteristicasDTO
+                                        {
+                                            Id = c.Id,
+                                            ProductoId = c.Productoid,
+                                            Nombre = c.Nombre,
+                                            Descripcion = c.Descripcion,
+                                            FechaCreado = c.FechaCreado
+                                        }).ToList()
+                                        : new List<ProductosCaracteristicasDTO>()
 
             }).ToList();
 
@@ -167,6 +179,8 @@ namespace Api_comerce.Services.Products
             .Include(pe => pe.Empaque)
                 .ThenInclude(e => e.UnidadSAT)
                  .Include(pe => pe.ImagenProducto)
+                  .Include(pe => pe.Producto)
+                  .ThenInclude(p => p.ProductosCaracteristicas)
      .Where(p => p.Id == id)
      .Select(p => new ProductoEcommerceDto
      {
@@ -221,8 +235,8 @@ namespace Api_comerce.Services.Products
                 }
              }
              : defaultBadges,
-         // Aquí NO asignar Images todavía
-           Images = p.ImagenProducto.Any() == true
+        
+         Images = p.ImagenProducto.Any() == true
                         ? p.ImagenProducto.Select(img => new ImageDto
                         {
                             Id = img.Id,
@@ -236,40 +250,28 @@ namespace Api_comerce.Services.Products
          Thumbnail = MapImage(p.ImagenProducto.ToList() ?? new List<ImagenProducto>(), "front"),
          ThumbnailBack = MapImage(p.ImagenProducto.ToList() ?? new List<ImagenProducto>(), "back"),
 
-         ProductCategories = p.Producto.Linea != null
-             ? new List<LineaDto> {
-                new LineaDto { Id = p.Producto.Linea.Id, Linea = p.Producto.Linea.Linea, Slug = p.Producto.Linea.Slug }
-             }
-             : new List<LineaDto>(),
-         ProductBrands = p.Producto.MarcaProducto != null
-             ? new List<MarcaProductoDto> {
-                new MarcaProductoDto { Id = p.Producto.MarcaProducto.Id, Marca = p.Producto.MarcaProducto.Marca, Slug = p.Producto.MarcaProducto.Slug }
-             }
-             : new List<MarcaProductoDto>()
+         ProductCategories = p.Producto.Linea != null? new List<LineaDto> {
+                            new LineaDto { Id = p.Producto.Linea.Id, Linea = p.Producto.Linea.Linea, Slug = p.Producto.Linea.Slug }
+                         }
+                         : new List<LineaDto>(),
+         ProductBrands = p.Producto.MarcaProducto != null? new List<MarcaProductoDto> {
+                            new MarcaProductoDto { Id = p.Producto.MarcaProducto.Id, Marca = p.Producto.MarcaProducto.Marca, Slug = p.Producto.MarcaProducto.Slug }
+                         }
+                         : new List<MarcaProductoDto>(),
+         ProductosCaracteristicas = p.Producto.ProductosCaracteristicas != null
+                                        ? p.Producto.ProductosCaracteristicas.Select(c => new ProductosCaracteristicasDTO
+                                        {
+                                            Id = c.Id,
+                                            ProductoId = c.Productoid,
+                                            Nombre = c.Nombre,
+                                            Descripcion = c.Descripcion,
+                                            FechaCreado = c.FechaCreado
+                                        }).ToList()
+                                        : new List<ProductosCaracteristicasDTO>()
      })
-     .ToListAsync();
+                 .ToListAsync();
 
-            //foreach (var producto in productoDto)
-            //{
-            //    producto.Images = new List<ImageDto>
-            //            {
-            //                new ImageDto
-            //                {
-            //                    Id = 0,
-            //                    Name = "Sayer-Generic.jpg",
-            //                    Width = 800,
-            //                    Height = 800,
-            //                    Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg",
-            //                    Formats = new FormatDto
-            //                    {
-            //                        Thumbnail = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 156, Height = 156 },
-            //                        Small = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 500, Height = 500 },
-            //                        Medium = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 750, Height = 750 },
-            //                        Large = new FormatItemDto { Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg", Width = 1000, Height = 1000 }
-            //                    }
-            //                }
-            //             };
-            //}
+          
 
             return   productoDto;
   
@@ -298,6 +300,8 @@ namespace Api_comerce.Services.Products
             .Include(pe => pe.Empaque)
                .ThenInclude(e => e.UnidadSAT)
                  .Include(pe => pe.ImagenProducto)
+                  .Include(pe => pe.Producto)
+                  .ThenInclude(p => p.ProductosCaracteristicas)
                   .Skip(offset)
       .Take(limit)
                  //.Where(p => p.ProductoId == id)
@@ -360,17 +364,17 @@ namespace Api_comerce.Services.Products
                     }
                     : defaultBadges,
                 Images = p.ImagenProducto != null && p.ImagenProducto.Any()
-    ? p.ImagenProducto.Select(img => new ImageDto
-    {
-        Id = img.Id,
-        Name = System.IO.Path.GetFileName(img.Url),
-        Url = img.Url,
-        Width = (int)img.Width,
-        Height = (int)img.Height,
+                    ? p.ImagenProducto.Select(img => new ImageDto
+                    {
+                        Id = img.Id,
+                        Name = System.IO.Path.GetFileName(img.Url),
+                        Url = img.Url,
+                        Width = (int)img.Width,
+                        Height = (int)img.Height,
         
-        Formats = new FormatDto()
-    }).ToList()
-    : new List<ImageDto>(),
+                        Formats = new FormatDto()
+                    }).ToList()
+                    : new List<ImageDto>(),
                 Thumbnail = MapImage(p.ImagenProducto?.ToList() ?? new List<ImagenProducto>(), "front"),
                 ThumbnailBack = MapImage(p.ImagenProducto?.ToList() ?? new List<ImagenProducto>(), "back"),
 
@@ -397,7 +401,17 @@ namespace Api_comerce.Services.Products
                     Slug = p.Producto.MarcaProducto.Slug
                 }
                     }
-                    : new List<MarcaProductoDto>()
+                    : new List<MarcaProductoDto>(),
+                ProductosCaracteristicas = p.Producto.ProductosCaracteristicas != null
+                                        ? p.Producto.ProductosCaracteristicas.Select(c => new ProductosCaracteristicasDTO
+                                        {
+                                            Id = c.Id,
+                                            ProductoId = c.Productoid,
+                                            Nombre = c.Nombre,
+                                            Descripcion = c.Descripcion,
+                                            FechaCreado = c.FechaCreado
+                                        }).ToList()
+                                        : new List<ProductosCaracteristicasDTO>()
 
             }).ToList();
 
@@ -408,15 +422,18 @@ namespace Api_comerce.Services.Products
         {
 
             var query = _context.Lineas
-     .Include(ci => ci.Productos)
-        .ThenInclude(p => p.MarcaProducto)
-    .Include(ci => ci.Productos)
-        .ThenInclude(p => p.ProductosEmpaque)
-            .ThenInclude(pe => pe.ImagenProducto)
-    .Include(ci => ci.Productos)
-        .ThenInclude(p => p.ProductosEmpaque)
-            .ThenInclude(pe => pe.Empaque)
-        .AsQueryable();
+        .Include(l => l.Productos)
+            .ThenInclude(p => p.MarcaProducto)
+        .Include(l => l.Productos)
+            .ThenInclude(p => p.ProductosEmpaque)
+                .ThenInclude(pe => pe.ImagenProducto)
+        .Include(l => l.Productos)
+            .ThenInclude(p => p.ProductosEmpaque)
+                .ThenInclude(pe => pe.Empaque)
+        .Include(l => l.Productos)
+            .ThenInclude(p => p.ProductosCaracteristicas)
+
+            .AsQueryable();
 
 
             if (categoriaId != 0)
@@ -463,6 +480,16 @@ namespace Api_comerce.Services.Products
                                  Acumulador = p.Acumulador ?? false,
                                  ProductoIdAcumulador = p.ProductoIdAcumulador ?? 0,
                                  CategoriaTipo = p.CategoriaTipo ?? "Default",
+                                 ProductosCaracteristicas = p.ProductosCaracteristicas != null
+                                        ? p.ProductosCaracteristicas.Select(c => new ProductosCaracteristicasDTO
+                                        {
+                                            Id = c.Id,
+                                            ProductoId = c.Productoid,
+                                            Nombre = c.Nombre,
+                                            Descripcion = c.Descripcion,
+                                            FechaCreado = c.FechaCreado
+                                        }).ToList()
+                                        : new List<ProductosCaracteristicasDTO>()
                              },
 
                              Empaque = pe.Empaque != null ? new EmpaqueDto
@@ -487,67 +514,14 @@ namespace Api_comerce.Services.Products
                                         Formats = new FormatDto()
                                     }).ToList()
                                 : new List<ImageDto>(),
+
+                           
                              
                          }))
                          .ToList()
             }).ToList();
 
-            //var query = _context.Lineas
-            //.Where(linea =>
-            //    (categoriaId == 0 || linea.Id == categoriaId) &&
-            //    (string.IsNullOrWhiteSpace(slug) || slug == "null" || linea.Slug.Contains(slug)))
-            //.Take(10)
-            //.Select(linea => new LineaDto
-            //{
-            //    Id = linea.Id,
-            //    Linea = linea.Linea,
-            //    Slug = linea.Slug,
-            //    FechaCreado = linea.FechaCreado,
-            //    ProductoEmpaque = linea.Productos.SelectMany(p => p.ProductosEmpaque.Select(pe => new ProductoEmpaqueDto
-            //    {
-            //        ProductoEmpaqueId = pe.Id,
-            //        ProductoId = pe.ProductoId,
-            //        EmpaqueId = pe.EmpaqueId,
-            //        Codigo = pe.Codigo ?? "NO DATO",
-            //        PCompra = pe.PCompra ?? 0,
-            //        PVenta = pe.PVenta ?? 0,
-            //        Descuento = (float?)(pe.Descuento ?? 0),
-            //        Activo = pe.Activo ?? false,
-
-            //        Producto = new ProductoDto
-            //        {
-            //            ProductId = p.Id,
-            //            ProductoSatId = p.ProductoSatId,
-            //            Prefijo = p.Prefijo ?? "NO DATO",
-            //            NombreProducto = p.NombreProducto ?? "NO DATO",
-            //            Descripcion = p.Descripcion ?? "NO DATO",
-            //            DescripcionBreve = p.DescripcionBreve ?? "NO DATO",
-            //            Slug = p.Slug ?? "no-slug",
-            //            Rating = p.Rating ?? 0,
-            //            Acumulador = p.Acumulador ?? false,
-            //            ProductoIdAcumulador = p.ProductoIdAcumulador ?? 0
-            //        },
-
-            //        Empaque = new EmpaqueDto
-            //        {
-            //            Id = pe.Empaque != null ? pe.Empaque.Id : 0,
-            //            Codigo = pe.Empaque != null ? pe.Empaque.CodigoEmpaque : "NO DATO"
-            //        },
-
-            //        ImagenProducto = pe.ImagenProducto.Select(img => new ImageDto
-            //        {
-            //            Name = System.IO.Path.GetFileName(img.Url),
-            //            Url = img.Url,
-            //            Width = (int)(img.Width ?? 800),
-            //            Height = (int)(img.Height ?? 800),
-            //            Formats = new FormatDto()
-            //        }).ToList()
-            //    })).ToList()
-            //});
-
-            //var lineas = await query.ToListAsync();
-
-            return lineas;
+        return lineas;
 
         }
 
@@ -642,14 +616,16 @@ namespace Api_comerce.Services.Products
     };
 
             var query = _context.ProductosEmpaque
-                .Include(pe => pe.Producto)
-        .ThenInclude(p => p.Linea)
-    .Include(pe => pe.Producto)
-        .ThenInclude(p => p.MarcaProducto)
-    .Include(pe => pe.Empaque)
-        .ThenInclude(e => e.UnidadSAT)
-    .Include(pe => pe.ImagenProducto)
-                .AsQueryable();
+     .Include(pe => pe.Producto)
+         .ThenInclude(p => p.Linea)
+     .Include(pe => pe.Producto)
+         .ThenInclude(p => p.MarcaProducto)
+     .Include(pe => pe.Producto)
+         .ThenInclude(p => p.ProductosCaracteristicas)  
+     .Include(pe => pe.Empaque)
+         .ThenInclude(e => e.UnidadSAT)
+     .Include(pe => pe.ImagenProducto)
+     .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(name_contains))
             {
@@ -754,7 +730,18 @@ namespace Api_comerce.Services.Products
                     Slug = p.Producto.MarcaProducto.Slug
                 }
                     }
-                    : new List<MarcaProductoDto>()
+                    : new List<MarcaProductoDto>(),
+                     ProductosCaracteristicas = p.Producto.ProductosCaracteristicas != null
+                        ? p.Producto.ProductosCaracteristicas.Select(c => new ProductosCaracteristicasDTO
+                        {
+                            Id = c.Id,
+                            ProductoId = c.Productoid,
+                            Nombre = c.Nombre,
+                            Descripcion = c.Descripcion,
+                            FechaCreado = c.FechaCreado
+                        }).ToList()
+                        : new List<ProductosCaracteristicasDTO>()
+
 
             }).ToList();
 
