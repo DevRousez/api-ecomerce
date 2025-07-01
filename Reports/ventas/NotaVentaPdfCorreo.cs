@@ -56,27 +56,27 @@ namespace Api_comerce.Reports.ventas
 
             gfx.DrawString($"Método de pago:", fontBold, XBrushes.Black, marginLeft, y);
             gfx.DrawString(orden.MetodoPago ?? "NO DATO", fontRegular, XBrushes.Black, marginLeft + 120, y);
-            y += lineHeight + 10;
+            y += lineHeight + 1;
 
             // Línea separadora
             gfx.DrawLine(XPens.Black, marginLeft, y, page.Width - marginLeft, y);
-            y += 10;
+            y += 13;
 
             // Tabla de productos: encabezado
             int colProducto = marginLeft;
-            int colCantidad = 300;
-            int colPrecioUnit = 370;
-            int colTotal = 460;
+            int colCantidad = 280;
+            int colPrecioUnit = 380;
+            int colTotal = 500;
 
             gfx.DrawString("Producto", fontBold, XBrushes.Black, colProducto, y);
             gfx.DrawString("Cantidad", fontBold, XBrushes.Black, colCantidad, y);
             gfx.DrawString("Precio Unitario", fontBold, XBrushes.Black, colPrecioUnit, y);
             gfx.DrawString("Total", fontBold, XBrushes.Black, colTotal, y);
-            y += lineHeight;
+           
 
-            gfx.DrawLine(XPens.Black, marginLeft, y, page.Width - marginLeft, y);
-            y += 5;
-
+            gfx.DrawLine(XPens.Black, marginLeft, y+10 , page.Width - marginLeft, y +10);
+            y += 1;
+ y += lineHeight;
             decimal subtotal = 0m;
 
             foreach (var item in orden.Detalles)
