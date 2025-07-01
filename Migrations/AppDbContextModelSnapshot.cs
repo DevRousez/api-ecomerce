@@ -604,6 +604,8 @@ namespace Api_comerce.Migrations
 
                     b.HasIndex("OrdenId");
 
+                    b.HasIndex("ProductoId");
+
                     b.ToTable("OrdenDetalle");
                 });
 
@@ -860,21 +862,6 @@ namespace Api_comerce.Migrations
                     b.ToTable("WishlistItems");
                 });
 
-            modelBuilder.Entity("OrdenDetalleProductoEmpaque", b =>
-                {
-                    b.Property<int>("OrdenDetalleId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductosEmpaqueId")
-                        .HasColumnType("int");
-
-                    b.HasKey("OrdenDetalleId", "ProductosEmpaqueId");
-
-                    b.HasIndex("ProductosEmpaqueId");
-
-                    b.ToTable("OrdenDetalleProductoEmpaque", (string)null);
-                });
-
             modelBuilder.Entity("Api_comerce.Models.Accounts", b =>
                 {
                     b.HasOne("Api_comerce.Models.AccountsTypes", "AccountsTypes")
@@ -970,7 +957,15 @@ namespace Api_comerce.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Api_comerce.Models.ProductosEmpaque", "ProductoEmpaque")
+                        .WithMany()
+                        .HasForeignKey("ProductoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("OrdenP");
+
+                    b.Navigation("ProductoEmpaque");
                 });
 
             modelBuilder.Entity("Api_comerce.Models.Productos", b =>
@@ -1060,21 +1055,6 @@ namespace Api_comerce.Migrations
                     b.Navigation("ProductEmpaque");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("OrdenDetalleProductoEmpaque", b =>
-                {
-                    b.HasOne("Api_comerce.Models.OrdenDetalle", null)
-                        .WithMany()
-                        .HasForeignKey("OrdenDetalleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Api_comerce.Models.ProductosEmpaque", null)
-                        .WithMany()
-                        .HasForeignKey("ProductosEmpaqueId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Api_comerce.Models.Accounts", b =>
