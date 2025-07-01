@@ -175,9 +175,7 @@ namespace Api_comerce.Services.Products
         (p.Codigo ?? "NO DATO") + " - " +
         (p.Producto.NombreProducto ?? "NO DATO") + " - " +
         (
-            p.Empaque != null &&
-            p.Empaque.UnidadSAT != null
-            ? p.Empaque.Empaque
+            p.Empaque != null ? p.Empaque.Empaque
             : "NO DATO"
         ),
          Featured = false,
@@ -310,7 +308,7 @@ namespace Api_comerce.Services.Products
             var productos = productosRaw.Select(p => new ProductoEcommerceDto
             {
                 ProductoEmpaqueId = p.Id,
-                Name = $"{p?.Codigo ?? "SIN-COD"} - {p.Producto.NombreProducto ?? "NO DATO"} - {p?.Empaque?.UnidadSAT?.UnidadSat ?? "SIN UNIDAD"}",
+                Name = $"{p?.Codigo ?? "SIN-COD"} - {p.Producto.NombreProducto ?? "NO DATO"} - {p?.Empaque?.Empaque ?? "SIN UNIDAD"}",
                 Featured = false,
                 Price = p?.PVenta ?? 0,
                 SalePrice = null,
@@ -455,8 +453,9 @@ namespace Api_comerce.Services.Products
                              {
                                  ProductId = p.Id,
                                  ProductoSatId = p.ProductoSatId,
+                               
                                  Prefijo = p.Prefijo ?? "NO DATO",
-                                 NombreProducto = p.NombreProducto ?? "NO DATO",
+                                 NombreProducto = $"{pe?.Codigo ?? "SIN-COD"} - {p.NombreProducto ?? "NO DATO"} - {pe?.Empaque?.Empaque ?? "SIN UNIDAD"}",
                                  Descripcion = p.Descripcion ?? "NO DATO",
                                  DescripcionBreve = p.DescripcionBreve ?? "NO DATO",
                                  Slug = p.Slug ?? "no-slug",
@@ -666,7 +665,7 @@ namespace Api_comerce.Services.Products
             var productos = productosRaw.Select(p => new ProductoEcommerceDto
             {
                 ProductoEmpaqueId = p.Id,
-                Name = $"{p?.Codigo ?? "SIN-COD"} - {p.Producto.NombreProducto ?? "NO DATO"} - {p?.Empaque?.UnidadSAT?.UnidadSat ?? "SIN UNIDAD"}",
+                Name = $"{p?.Codigo ?? "SIN-COD"} - {p.Producto.NombreProducto ?? "NO DATO"} - {p?.Empaque?.Empaque ?? "SIN UNIDAD"}",
                 Featured = false,
                 Price = p?.PVenta ?? 0,
                 SalePrice = 0,
