@@ -8,7 +8,10 @@ namespace Api_comerce.Services.Checkout
 
         Task<OrdenDto> GetOrdenByIdAsync(int ordenId);
         Task<bool> MarcarOrdenComoPagadaAsync(int ordenId);
-        
-            
+        Task<List<OrdenDto>> GetOrdenesPorUsuarioAsync(int accountId);
+
+        Task<bool> ReenviarNotaVentaCorreoAsync(int ordenId);
+
+
     }
 }

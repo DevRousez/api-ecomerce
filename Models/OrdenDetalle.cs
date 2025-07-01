@@ -17,6 +17,7 @@ namespace Api_comerce.Models
         public int Cantidad { get; set; }
         public decimal Precio { get; set; }
 
-        public ICollection<ProductosEmpaque> ProductosEmpaque { get; set; } = new List<ProductosEmpaque>();
+        [ForeignKey("ProductoId")]
+        public ProductosEmpaque ProductoEmpaque { get; set; } 
     }
 }

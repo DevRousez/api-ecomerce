@@ -15,6 +15,7 @@ using Api_comerce.Services.Checkout;
 using Api_comerce.Services.Wishlists;
 using Api_comerce.Services.AccountsDatosFacturacion;
 using Api_comerce.Services.AccountsDirecciones;
+using Api_comerce.Services.correos;
 
 
 
@@ -38,6 +39,7 @@ builder.Services.AddScoped<ICheckoutService, CheckoutService>();
 builder.Services.AddScoped<IWishlistService, WishlistService>();
 builder.Services.AddScoped<IDatosFacturacionServicie, DatosFacturacionService>();
 builder.Services.AddScoped<IAccountsDireccionesServicie, AccountsDireccionesServicie>();
+builder.Services.AddScoped<ICorreoSevice, CorreoSevice>();
 
 
 builder.Services.AddCors(options =>
