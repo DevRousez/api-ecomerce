@@ -35,6 +35,24 @@ namespace Api_comerce.Services.AccountsDirecciones
 
         public async Task<AccountDireccionDto> CreateAsync(AccountDireccionDto dto)
         {
+
+
+            if (dto.EsPredeterminada)
+            {
+                var direccionesExistentes = await _context.AccountsDirecciones
+                    .Where(d => d.AccountId == dto.AccountId && d.EsPredeterminada)
+                    .ToListAsync();
+
+                foreach (var dir in direccionesExistentes)
+                {
+                    dir.EsPredeterminada = false;
+                    dir.UpdatedAt = DateTime.UtcNow;
+                }
+
+                // Guarda cambios de los existentes antes de agregar la nueva
+                await _context.SaveChangesAsync();
+            }
+
             var direccion = new Models.AccountsDirecciones
             {
                 AccountId = dto.AccountId,

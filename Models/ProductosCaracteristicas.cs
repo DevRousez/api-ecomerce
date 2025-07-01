@@ -7,8 +7,21 @@ namespace Api_comerce.Models
     public class ProductosCaracteristicas
     {
         [Key]
-        public int id { get; set; }
-        public string Descripcion { get; set; }
-        public DateTime FechaCreado { get; set; }
+        public int Id { get; set; }
+
+        public int Productoid { get; set; }
+
+        [Required]
+        [StringLength(100)]
+        public string Nombre { get; set; }  // Ej: "Color", "Acabado", etc.
+
+        [Required]
+        [StringLength(255)]
+        public string Descripcion { get; set; } // Ej: "Rojo", "Mate", etc.
+
+        public DateTime FechaCreado { get; set; } = DateTime.Now;
+
+        [ForeignKey("Productoid")]
+        public virtual Productos Producto { get; set; }
     }
 }
