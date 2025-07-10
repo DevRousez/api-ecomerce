@@ -597,14 +597,14 @@ namespace Api_comerce.Migrations
                     b.Property<decimal>("Precio")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("ProductoId")
+                    b.Property<int>("ProductoEmpaqueId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("OrdenId");
 
-                    b.HasIndex("ProductoId");
+                    b.HasIndex("ProductoEmpaqueId");
 
                     b.ToTable("OrdenDetalle");
                 });
@@ -959,7 +959,7 @@ namespace Api_comerce.Migrations
 
                     b.HasOne("Api_comerce.Models.ProductosEmpaque", "ProductoEmpaque")
                         .WithMany()
-                        .HasForeignKey("ProductoId")
+                        .HasForeignKey("ProductoEmpaqueId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

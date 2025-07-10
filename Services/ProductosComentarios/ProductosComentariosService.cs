@@ -38,11 +38,11 @@ namespace Api_comerce.Services.ProductosComentarios
         {
             bool comproProducto = await _context.OrdenDetalle
      .Include(od => od.OrdenP)
-     .AnyAsync(od => od.OrdenP.Id == dto.AccountId && od.ProductoId == dto.ProductoId);
+     .AnyAsync(od => od.OrdenP.Id == dto.AccountId && od.ProductoEmpaqueId == dto.ProductoId);
 
             if (!comproProducto)
             {
-                return null; // BadRequest(new { success = false, message = "Solo puedes comentar productos que hayas comprado." }); 
+                return null; 
             }
 
             var nuevo = new Api_comerce.Models.ProductosComentarios

@@ -27,7 +27,25 @@ namespace Api_comerce.Dtos
         public List<ProductoEmpaqueDto> productoEmpaques { get; set; }
         public List<ProductosCaracteristicasDTO> ProductosCaracteristicas { get; set; }
     }
+    public class ProductoOrdenDto
+    {
+        public int ProductId { get; set; }
+        public int? ProductoSatId { get; set; }
+        public string Prefijo { get; set; }
+        public string NombreProducto { get; set; }
+        public string Descripcion { get; set; }
+        public string DescripcionBreve { get; set; }
+        public string Slug { get; set; }
+        public int? Rating { get; set; }
+        public bool? Acumulador { get; set; }
+        public int? ProductoIdAcumulador { get; set; }
+        public string CategoriaTipo { get; set; }
 
-    
+        public LineaDto? Linea { get; set; }
+        public MarcaProductoDto? MarcaProducto { get; set; }
+
+        public List<ProductosCaracteristicasDTO> ProductosCaracteristicas { get; set; }
+    }
+
 
 }
