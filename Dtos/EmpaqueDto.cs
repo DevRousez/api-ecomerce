@@ -7,6 +7,7 @@ namespace Api_comerce.Dtos
     public class EmpaqueDto
     {
         public int Id { get; set; }
+        public int ProductoEmpaqueId {  get; set; } 
         public string Empaque { get; set; }
         public double? Contenido { get; set; }
         public bool? Sincronizado { get; set; }

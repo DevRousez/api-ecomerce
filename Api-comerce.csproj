@@ -22,8 +22,28 @@
     <Compile Remove="Migrations\20250615175503_CreateOrdenesAndDetalles.Designer.cs" />
     <Compile Remove="Migrations\20250615194227_CreateWishLists.cs" />
     <Compile Remove="Migrations\20250615194227_CreateWishLists.Designer.cs" />
+    <Compile Remove="Migrations\20250622065438_alterproductosColumns.cs" />
+    <Compile Remove="Migrations\20250622065438_alterproductosColumns.Designer.cs" />
+    <Compile Remove="Migrations\20250623044913_CreateProductosCaracteristicas.cs" />
+    <Compile Remove="Migrations\20250623044913_CreateProductosCaracteristicas.Designer.cs" />
+    <Compile Remove="Migrations\20250623051708_ProductosComentarios.cs" />
+    <Compile Remove="Migrations\20250623051708_ProductosComentarios.Designer.cs" />
+    <Compile Remove="Migrations\20250625022759_AjusteWishlistItemSinWishlist.cs" />
+    <Compile Remove="Migrations\20250625022759_AjusteWishlistItemSinWishlist.Designer.cs" />
+    <Compile Remove="Migrations\20250626060912_AccountsDirecciones.cs" />
+    <Compile Remove="Migrations\20250626060912_AccountsDirecciones.Designer.cs" />
+    <Compile Remove="Migrations\20250626061405_DatosFaacturacion.cs" />
+    <Compile Remove="Migrations\20250626061405_DatosFaacturacion.Designer.cs" />
     <Compile Remove="Migrations\20250626061406_AddDireccionEnvioAndDatosFacturacionToOrden.cs" />
     <Compile Remove="Migrations\20250626061406_AddDireccionEnvioAndDatosFacturacionToOrden.Designer.cs" />
+    <Compile Remove="Migrations\20250626063536_AddDireccionEnvioAndDatosFacturacionToOrden.cs" />
+    <Compile Remove="Migrations\20250626063536_AddDireccionEnvioAndDatosFacturacionToOrden.Designer.cs" />
+    <Compile Remove="Migrations\20250626063849_AddDireccionEnvioToOrden.cs" />
+    <Compile Remove="Migrations\20250626063849_AddDireccionEnvioToOrden.Designer.cs" />
+    <Compile Remove="Migrations\20250701041757_productoscaracteristicas.cs" />
+    <Compile Remove="Migrations\20250701041757_productoscaracteristicas.Designer.cs" />
+    <Compile Remove="Migrations\20250701065816_AgregaColumnasdatosfacturacion.cs" />
+    <Compile Remove="Migrations\20250701065816_AgregaColumnasdatosfacturacion.Designer.cs" />
     <Compile Remove="Migrations\AppDbContextModelSnapshot.cs" />
   </ItemGroup>
   <ItemGroup>

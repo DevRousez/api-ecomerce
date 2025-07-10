@@ -204,29 +204,30 @@ namespace Api_comerce.Services.Products
          CategoriaTipo = p.Producto.CategoriaTipo ?? "Default",
          CreatedAt = DateTime.Now,
          UpdatedAt = DateTime.Now,
-         Sizes = new List<EmpaqueDto>
+         Sizes = _context.ProductosEmpaque
+            .Where(pe2 => pe2.ProductoId == p.ProductoId)
+            .Select(pe2 => new EmpaqueDto
             {
-                new EmpaqueDto
+                Id = pe2.EmpaqueId,
+                ProductoEmpaqueId = pe2.Id, // <-- Aquí incluyes el ID de ProductoEmpaque
+                Empaque = pe2.Empaque.Empaque,
+                Contenido = pe2.Empaque.Contenido,
+                Sincronizado = pe2.Empaque.Sincronizado,
+                CodigoEmpaque = pe2.Empaque.CodigoEmpaque,
+                Codigo = pe2.Codigo ?? "NO DATO",
+                PCompra = pe2.PCompra ?? 0,
+                PVenta = pe2.PVenta ?? 0,
+                Descuento = pe2.Descuento ?? 0,
+                Activo = pe2.Activo ?? false,
+                FechaCreado = pe2.Empaque.FechaCreado,
+                UnidadSat = pe2.Empaque.UnidadSAT != null ? new UnidadSatDto
                 {
-                    Id = p.EmpaqueId,
-                    Empaque = p.Empaque.Empaque,
-                    Contenido = p.Empaque.Contenido,
-                    Sincronizado = p.Empaque.Sincronizado,
-                    CodigoEmpaque = p.Empaque.CodigoEmpaque,
-                    Codigo = p.Codigo ?? "NO DATO",
-                    PCompra = p.PCompra ?? 0,
-                    PVenta = p.PVenta ?? 0,
-                    Descuento = p.Descuento ?? 0,
-                    Activo = p.Activo ?? false,
-                    FechaCreado = p.Empaque.FechaCreado,
-                    UnidadSat = p.Empaque.UnidadSAT != null ? new UnidadSatDto
-                    {
-                        Id = p.Empaque.UnidadSAT.Id,
-                        ClaveUnidad = p.Empaque.UnidadSAT.ClaveUnidad ?? "NO DATO",
-                        UnidadSat = p.Empaque.UnidadSAT.UnidadSat ?? "NO DATO"
-                    } : null
-                }
-            },
+                    Id = pe2.Empaque.UnidadSAT.Id,
+                    ClaveUnidad = pe2.Empaque.UnidadSAT.ClaveUnidad ?? "NO DATO",
+                    UnidadSat = pe2.Empaque.UnidadSAT.UnidadSat ?? "NO DATO"
+                } : null
+            })
+            .ToList(),
          Colors = new List<string> { "#eb7b8b", "#000000", "#927764" },
          Badges = p.Producto.MarcaProducto != null
              ? new List<MarcaProductoDto> {

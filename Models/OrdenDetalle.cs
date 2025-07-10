@@ -13,11 +13,13 @@ namespace Api_comerce.Models
         [ForeignKey("OrdenId")]
         public Orden OrdenP { get; set; }
 
-        public int ProductoId { get; set; }
+        public int ProductoEmpaqueId { get; set; }
         public int Cantidad { get; set; }
         public decimal Precio { get; set; }
 
-        [ForeignKey("ProductoId")]
-        public ProductosEmpaque ProductoEmpaque { get; set; } 
+       
+
+        [ForeignKey("ProductoEmpaqueId")]
+        public ProductosEmpaque ProductoEmpaque { get; set; }
     }
 }

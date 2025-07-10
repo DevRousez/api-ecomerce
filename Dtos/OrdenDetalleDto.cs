@@ -2,8 +2,11 @@
 {
     public class OrdenDetalleDto
     {
-      public int  ProductoId { get; set; }
+        public int ProductoEmpaqueId { get; set; }
         public float Cantidad { get; set; }
         public decimal Precio { get; set; }
+
+       public ProductoEmpaqueOrdenDto ProductoEmpaque { get; set; }
+
     }
 }
