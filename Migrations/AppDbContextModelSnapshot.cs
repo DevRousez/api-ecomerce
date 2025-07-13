@@ -17,7 +17,7 @@ namespace Api_comerce.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.5")
+                .HasAnnotation("ProductVersion", "8.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -652,12 +652,12 @@ namespace Api_comerce.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Descripcion")
-                        .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
+                        .HasMaxLength(3000)
+                        .HasColumnType("nvarchar(3000)");
 
                     b.Property<string>("DescripcionBreve")
-                        .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<int?>("LineaId")
                         .HasColumnType("int");
@@ -666,8 +666,8 @@ namespace Api_comerce.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("NombreProducto")
-                        .HasMaxLength(80)
-                        .HasColumnType("nvarchar(80)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("Prefijo")
                         .HasMaxLength(50)
@@ -752,14 +752,14 @@ namespace Api_comerce.Migrations
                     b.Property<DateTime>("FechaCreado")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ProductoId")
+                    b.Property<int>("ProductoEmpaqueId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AccountId");
 
-                    b.HasIndex("ProductoId");
+                    b.HasIndex("ProductoEmpaqueId");
 
                     b.ToTable("ProductosComentarios");
                 });
@@ -1008,15 +1008,15 @@ namespace Api_comerce.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Api_comerce.Models.Productos", "Producto")
+                    b.HasOne("Api_comerce.Models.ProductosEmpaque", "ProductoEmpaque")
                         .WithMany()
-                        .HasForeignKey("ProductoId")
+                        .HasForeignKey("ProductoEmpaqueId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Account");
 
-                    b.Navigation("Producto");
+                    b.Navigation("ProductoEmpaque");
                 });
 
             modelBuilder.Entity("Api_comerce.Models.ProductosEmpaque", b =>

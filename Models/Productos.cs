@@ -11,11 +11,11 @@ namespace Api_comerce.Models
         public int? ProductoSatId { get; set; }
         [StringLength(50)]
         public string? Prefijo { get; set; }
-        [StringLength(80)]
+        [StringLength(200)]
         public string? NombreProducto { get; set; }
-        [StringLength(300)]
+        [StringLength(3000)]
         public string? Descripcion { get; set; }
-        [StringLength(300)]
+        [StringLength(500)]
         public string? DescripcionBreve { get; set; }
         public string? Slug { get; set; }
         public int? Rating { get; set; }
