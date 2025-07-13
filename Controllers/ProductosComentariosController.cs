@@ -28,26 +28,36 @@ namespace Api_comerce.Controllers
             return Ok(comentarios);
         }
 
-       
-        [HttpGet("{id}")]
+
+        [HttpGet("filter")]
         [Authorize]
-        public async Task<ActionResult<ProductosComentariosDTO>> GetById(int id)
+        public async Task<ActionResult<ProductosComentariosDTO>> GetByFilter(
+    [FromQuery] int? id = null,
+    [FromQuery] int? productoEmpaqueId = null)
         {
-            var comentario = await _comentarioService.GetByIdAsync(id);
+            if (!id.HasValue && !productoEmpaqueId.HasValue)
+                return BadRequest("Debes especificar al menos 'id' o 'productoEmpaqueId'.");
+
+            var comentario = await _comentarioService.GetByIdAsync(id, productoEmpaqueId);
             if (comentario == null)
                 return NotFound();
 
             return Ok(comentario);
         }
 
-       
+
+
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult<ProductosComentariosDTO>> Create([FromBody] ProductosComentariosDTO dto)
+        public async Task<ActionResult<ProductosComentariosDTO>> Create([FromBody] CrearComentarioDTO dto)
         {
             dto.AccountId = GetUserId();    
             var created = await _comentarioService.CreateAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+            if (created == null)
+                    return BadRequest("El usuario no ha comprado este producto");
+           
+            
+            return CreatedAtAction(nameof(GetByFilter), new { id = created.Id }, created);
         }
 
         

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Api_comerce.Services.ProductosComentarios
 {
-    public class ProductosComentariosService
+    public class ProductosComentariosService : IProductosComentariosService
     {
         private readonly AppDbContext _context;
 
@@ -17,28 +17,38 @@ namespace Api_comerce.Services.ProductosComentarios
         public async Task<List<ProductosComentariosDTO>> GetAllAsync()
         {
             var comentarios = await _context.ProductosComentarios
-                .Include(c => c.Producto)
+                .Include(c => c.ProductoEmpaque)
                 .Include(c => c.Account)
                 .ToListAsync();
 
             return comentarios.Select(c => MapToDto(c)).ToList();
         }
 
-        public async Task<ProductosComentariosDTO?> GetByIdAsync(int id)
+        public async Task<ProductosComentariosDTO?> GetByIdAsync(int? id = null, int? productoEmpaqueId = null)
         {
-            var comentario = await _context.ProductosComentarios
-                .Include(c => c.Producto)
+            var query = _context.ProductosComentarios
+                .Include(c => c.ProductoEmpaque)
                 .Include(c => c.Account)
-                .FirstOrDefaultAsync(c => c.Id == id);
+                .AsQueryable();
+
+            if (id.HasValue)
+                query = query.Where(c => c.Id == id.Value);
+
+            if (productoEmpaqueId.HasValue)
+                query = query.Where(c => c.ProductoEmpaqueId == productoEmpaqueId.Value);
+
+            var comentario = await query.FirstOrDefaultAsync();
 
             return comentario != null ? MapToDto(comentario) : null;
         }
 
-        public async Task<ProductosComentariosDTO> CreateAsync(ProductosComentariosDTO dto)
+        public async Task<ProductosComentariosDTO> CreateAsync(CrearComentarioDTO dto)
         {
             bool comproProducto = await _context.OrdenDetalle
-     .Include(od => od.OrdenP)
-     .AnyAsync(od => od.OrdenP.Id == dto.AccountId && od.ProductoEmpaqueId == dto.ProductoId);
+      .Include(od => od.OrdenP)
+          .ThenInclude(o => o.AccountsDireccion)
+      .AnyAsync(od => od.ProductoEmpaqueId == dto.ProductoId
+                      && od.OrdenP.AccountsDireccion.AccountId == dto.AccountId);
 
             if (!comproProducto)
             {
@@ -47,7 +57,7 @@ namespace Api_comerce.Services.ProductosComentarios
 
             var nuevo = new Api_comerce.Models.ProductosComentarios
             {
-                ProductoId = dto.ProductoId,
+                ProductoEmpaqueId = dto.ProductoId,
                 AccountId = dto.AccountId,
                 Comentario = dto.Comentario,
                 Calificacion = dto.Calificacion,
@@ -90,8 +100,8 @@ namespace Api_comerce.Services.ProductosComentarios
             return new ProductosComentariosDTO
             {
                 Id = c.Id,
-                ProductoId = c.ProductoId,
-                Producto = c.Producto,
+                ProductoEmpaqueId = c.ProductoEmpaqueId,
+                ProductoEmpaque = c.ProductoEmpaque,
                 AccountId = c.AccountId,
                 Account = c.Account,
                 Comentario = c.Comentario,
@@ -99,5 +109,15 @@ namespace Api_comerce.Services.ProductosComentarios
                 FechaCreado = c.FechaCreado
             };
         }
+
+        //public async Task<ProductosComentariosDTO?> GetByProductosIdAsync(int ProductoEmpaqueid)
+        //{
+        //    var comentario = await _context.ProductosComentarios
+        //        .Include(c => c.Producto)
+        //        .Include(c => c.Account)
+        //        .FirstOrDefaultAsync(c => c.ProductoId == ProductoEmpaqueid);
+
+        //    return comentario != null ? MapToDto(comentario) : null;
+        //}
     }
 }
