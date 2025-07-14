@@ -24,21 +24,39 @@ namespace Api_comerce.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProductosComentariosDTO>>> GetAll()
         {
-            var comentarios = await _comentarioService.GetAllAsync();
+            var userId = GetUserId();
+            var comentarios = await _comentarioService.GetAllAsync(userId);
             return Ok(comentarios);
         }
 
 
         [HttpGet("filter")]
         [Authorize]
-        public async Task<ActionResult<ProductosComentariosDTO>> GetByFilter(
+        public async Task<ActionResult<ProductoConComentariosDTO>> GetByFilter(
     [FromQuery] int? id = null,
     [FromQuery] int? productoEmpaqueId = null)
         {
             if (!id.HasValue && !productoEmpaqueId.HasValue)
                 return BadRequest("Debes especificar al menos 'id' o 'productoEmpaqueId'.");
+            int? userId = GetUserId();
+            if(!userId.HasValue)
+                return BadRequest("No autorizado, sesion");
+            var comentario = await _comentarioService.GetComentarioFiltradoAsync(id, productoEmpaqueId, userId);
+            if (comentario == null)
+                return NotFound();
 
-            var comentario = await _comentarioService.GetByIdAsync(id, productoEmpaqueId);
+            return Ok(comentario);
+        }
+
+        [HttpGet("limit")]
+        [Authorize]
+        public async Task<ActionResult<ProductosComentariosDTO>> GetByLimit(
+    [FromQuery] int? _limit = 10)
+        {
+            if (!_limit.HasValue)
+                return BadRequest("Debes especificar un valor mayor a 0");
+            var userId = GetUserId();
+            var comentario = await _comentarioService.GetByLimitAsync(_limit, userId);
             if (comentario == null)
                 return NotFound();
 
