@@ -110,5 +110,13 @@ namespace Api_comerce.Controllers
 
             return int.Parse(userIdClaim.Value);
         }
+
+        [HttpGet("AllowAnony/{productoEmpaqueId}")]
+        [AllowAnonymous]
+        public async Task<ActionResult<ProductosComentariosDTO>> GetComentariosPorProducto(int productoEmpaqueId)
+        {
+            var comentarios = await _comentarioService.GetComentariosPorProductoAsync(productoEmpaqueId);
+            return Ok(comentarios);
+        }
     }
 }

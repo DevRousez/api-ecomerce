@@ -1,6 +1,9 @@
-﻿using Api_comerce.Data;
+﻿using System.Collections.Generic;
+using Api_comerce.Data;
 using Api_comerce.Dtos;
+using Api_comerce.Models;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 
 namespace Api_comerce.Services.ProductosComentarios
@@ -134,7 +137,44 @@ namespace Api_comerce.Services.ProductosComentarios
             _context.ProductosComentarios.Add(nuevo);
             await _context.SaveChangesAsync();
 
+            nuevo = await _context.ProductosComentarios
+             .Include(c => c.ProductoEmpaque)
+                    .ThenInclude(e => e.Producto)
+                .Include(c => c.Account)
+            .FirstOrDefaultAsync(c => c.Id == nuevo.Id);
+
             return MapToDto(nuevo, dto.AccountId);
+        }
+
+        public async Task<List<ProductoConComentariosDTO>> GetComentariosPorProductoAsync(int productoEmpaqueId)
+        {
+            var comentarios = await _context.ProductosComentarios
+                .Include(c => c.ProductoEmpaque)
+                    .ThenInclude(e => e.Producto)
+                .Include(c => c.Account)
+                .OrderByDescending(c => c.FechaCreado)
+               .Where(c => c.ProductoEmpaqueId == productoEmpaqueId)
+                .ToListAsync();
+          
+            var agrupados = comentarios
+                .GroupBy(c => c.ProductoEmpaqueId)
+                .Select(g =>
+                {
+                    var productoEmpaque = g.First().ProductoEmpaque;
+                    var producto = productoEmpaque.Producto;
+
+                    return new ProductoConComentariosDTO
+                    {
+                        ProductoEmpaqueId = productoEmpaque.Id,
+                        ProductoId = producto.Id,
+                        NombreProducto = producto.NombreProducto ?? "Sin nombre",
+
+                        Comentarios = g.Select(c => MapToDto(c, 0)).ToList()
+                    };
+                })
+                .ToList();
+            return agrupados;
+
         }
 
         public async Task<bool> UpdateAsync(int id, ProductosComentariosDTO dto)
