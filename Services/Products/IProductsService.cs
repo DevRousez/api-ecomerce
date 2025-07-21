@@ -8,7 +8,11 @@ namespace Api_comerce.Services.Products
         Task<List<ProductoEcommerceDto>> GetAllProductosAsync();
         Task<List<ProductoEcommerceDto>> GetProductoByIdAsync(int id);
         Task<List<ProductoEcommerceDto>> GetProductosLimitAsync(int limit = 10, int offset = 0);
-        Task<List<catLineaDTO>> GetProductsCategories(int categoryId=0, string slug="null");
+        //stored procedures
+        Task<List<spProductoEcommerceDto>> GetProductsidSP(int categoryId=0, string slug="null");
+        Task<List<spProductoEcommerceDto>> GetProductsSP();
+
+        //end stored procedures
         Task<List<LineaDto>> GetProductosCategories(int categoryId=0, string slug="null");
 
 

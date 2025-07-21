@@ -21,7 +21,7 @@ namespace Api_comerce.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProductoEcommerceDto>>> GetProductos()
         {
-            var productos = await _productsService.GetAllProductosAsync();
+            var productos = await _productsService.GetProductsSP();
             return Ok(productos);
         }
 
@@ -43,9 +43,10 @@ namespace Api_comerce.Controllers
 
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<IEnumerable<ProductoEcommerceDto>>> GetProducto(int id)
+        public async Task<ActionResult<IEnumerable<spProductoEcommerceDto>>> GetProducto(int id)
         {
-            var producto = await _productsService.GetProductoByIdAsync(id);
+            var producto = await _productsService.GetProductsidSP(id,"");
+            //var producto = await _productsService.GetProductoByIdAsync(id);
             if (producto == null)
                 return NotFound();
 

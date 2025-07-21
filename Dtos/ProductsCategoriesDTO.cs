@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Api_comerce.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Api_comerce.Dtos
 {
@@ -77,51 +78,54 @@ namespace Api_comerce.Dtos
     [Keyless]
     public class ProductoPlano
     {
-        // Línea
-        public int Id { get; set; } // lineas.Id
-        public string Name_Linea { get; set; } // lineas.Linea
-        public string Slug_Linea { get; set; } // lineas.Slug
-        public DateTime CreatedAtLinea { get; set; } // Lineas.FechaCreado
-        public DateTime UpdatedAtLinea { get; set; } // Lineas.FechaCreado
+        public int ProductoEmpaqueId { get; set; }
 
-        // Producto
-        public int Id_Producto { get; set; } // Productos.Id
-        public int? ProductoSatId { get; set; } // Productos.ProductoSatId
-        public string Prefijo { get; set; } // productos.Prefijo
-        public string NombreProducto { get; set; } // ProductoEmpaque.Codigo + ' ' + productos.NombreProducto
-        public double? PVenta { get; set; } // ProductoEmpaque.PVenta
-        public double? PCompra { get; set; } // ProductoEmpaque.PCompra
-        public double? Descuento { get; set; } // ProductoEmpaque.Descuento
-        public string Descripcion { get; set; } // Productos.Descripcion
-        public string DescripcionBreve { get; set; } // Productos.DescripcionBreve
-        public string SlugProducto { get; set; } // Productos.Slug
-        public int? Rating { get; set; } // productos.Rating
-        public bool? Acumulador { get; set; } // productos.Acumulador
-        public int Is_Stock { get; set; } // 0 as is_stock
-        public int? ProductoIdAcumulador { get; set; } // productos.ProductoIdAcumulador
-        public DateTime CreatedAtProducto { get; set; } // productos.createdat
-        public DateTime UpdatedAtProducto { get; set; } // productos.updatedat
+        public string NombreProductoCodigo { get; set; }
 
-        // Size
-        public int? Id_Size { get; set; } // ProductoEmpaque.id
-        public string Codigo_Empaque { get; set; } // ProductoEmpaque.codigo
-        public double? PCompraPE { get; set; } // ProductoEmpaque.PCompra
-        public double? PVentaPE { get; set; } // ProductoEmpaque.PVenta
-        public double? DescuentoPE { get; set; } // ProductoEmpaque.Descuento
-        public bool? ActivoPE { get; set; } // ProductoEmpaque.Activo
+        public bool Featured { get; set; }
 
-        // Colores (placeholder, ya que lo defines como string fijo)
-        public string Colors { get; set; } // 'azul' as colors
+        public decimal Price { get; set; }
 
-        // Marca (Badge)
-        public int Id_Marca { get; set; } // MarcasProducto.Id
-        public string Marca { get; set; } // MarcasProducto.Marca
-        public string SlugMarca { get; set; } // MarcasProducto.Slug
+        public decimal SalePrice { get; set; }
 
-        public int? id_imagen { get; set; }
-        public string nameImagen { get; set; }
-        public string url_imagen { get; set; }
+        public bool OnSale { get; set; }
 
-        public bool? EsImagenPrincipal { get; set; } = false;
+        public string Slug { get; set; }
+
+        public bool IsStock { get; set; }
+
+        public int RatingCount { get; set; }
+
+        public string Description { get; set; }
+
+        public string ShortDescription { get; set; }
+
+        public string CategoriaTipo { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+
+        public DateTime UpdatedAt { get; set; }
+
+        // Este campo debe ser deserializado manualmente si estás trayendo Sizes como JSON
+        public string Sizes { get; set; }      
+            public string ProductosCaracteristicas { get; set; }
+
+        public string ProductoImagenes { get; set; }
+
+        public int Id_Marca { get; set; }
+
+        public string Marca { get; set; }
+        public int lineaID { get; set; }
+        public string linea { get; set; }
+        public string slug_linea { get; set; }
+     
+        public DateTime fecha_creado_linea { get; set; }
+
+        public string Slug_Marca { get; set; }
+
+
+
+        public string thumbnail { get; set; }
+        public string thumbnailback { get; set; }
     }
 }
