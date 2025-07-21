@@ -10,6 +10,7 @@ using Api_comerce.Models;
 using System;
 using System.ComponentModel.DataAnnotations;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using Newtonsoft.Json;
 
 
 namespace Api_comerce.Services.Products
@@ -530,7 +531,7 @@ namespace Api_comerce.Services.Products
         }
 
         //no me gusto que tarda mucho xd 
-        public async Task<List<catLineaDTO>> GetProductsCategories(int categoryId = 0, string slug = "null")
+        public async Task<List<spProductoEcommerceDto>> GetProductsidSP(int categoryId = 0, string slug = "null")
         {
 
             string baseUrl = "";
@@ -538,75 +539,160 @@ namespace Api_comerce.Services.Products
 
 
             var resultadoPlano = await _context.Set<ProductoPlano>()
-            .FromSqlInterpolated($"EXEC spCategorias_productosGet @categoria_id={categoryId}, @categoria_like={slug}")
+            .FromSqlInterpolated($"EXEC spProductosEmpaqueGet @productoEmpaqueid={categoryId}")
         .ToListAsync();
 
-            // Aquí haces el agrupamiento como te mostré antes
-            var lineasDict = new Dictionary<int, catLineaDTO>();
 
-            foreach (var row in resultadoPlano)
+
+            var productoDtos = resultadoPlano.Select(p => new spProductoEcommerceDto
             {
-                if (!lineasDict.TryGetValue(row.Id, out var linea))
-                {
-                    linea = new catLineaDTO
+                ProductoEmpaqueId = p.ProductoEmpaqueId,
+                Name = p.NombreProductoCodigo,
+                Featured = p.Featured,
+                Price = p.Price,
+                SalePrice = p.SalePrice,
+                OnSale = p.OnSale,
+                Slug = p.Slug,
+                IsStock = p.IsStock,
+                RatingCount = p.RatingCount,
+                Description = p.Description,
+                ShortDescription = p.ShortDescription,
+                CategoriaTipo = p.CategoriaTipo,
+                CreatedAt = p.CreatedAt,
+                UpdatedAt = p.UpdatedAt,
+
+                // Aquí deserializas el JSON de Sizes en la propiedad Sizes
+                Sizes = string.IsNullOrEmpty(p.Sizes)
+                    ? new List<spEmpaqueDto>()
+                    : JsonConvert.DeserializeObject<List<spEmpaqueDto>>(p.Sizes),
+
+               
+                Badges = new List<MarcaProductoDto>
                     {
-                        Id = row.Id,
-                        Name = row.Name_Linea,
-                        Slug = row.Slug_Linea.ToLower().Replace(" ", "-"),
-                        Products = new List<catProductoDTO>()
-                    };
-                    lineasDict[row.Id] = linea;
-                }
+                        new MarcaProductoDto
+                        {
+                            Id = p.Id_Marca,
+                            Marca = p.Marca,
+                            Slug = p.Slug_Marca
+                        }
+                    },
 
-                var producto = linea.Products.FirstOrDefault(p => p.Id == row.Id_Producto);
-                if (producto == null)
-                {
-                    producto = new catProductoDTO
+                Images = string.IsNullOrEmpty(p.ProductoImagenes)
+                    ? new List<spImageDto>()
+                    : JsonConvert.DeserializeObject<List<spImageDto>>(p.ProductoImagenes),
+
+                //Thumbnail = string.IsNullOrEmpty(p.thumbnail)
+                //    ? new spImagenProductoDto()                   
+                //    : JsonConvert.DeserializeObject<spImagenProductoDto>(p.thumbnail),
+
+                //ThumbnailBack = string.IsNullOrEmpty(p.thumbnailback)
+                //    ? new spImagenProductoDto()
+                //    : JsonConvert.DeserializeObject<spImagenProductoDto>(p.thumbnailback),
+
+
+                ProductCategories = p.lineaID != null ? new List<LineaDto> {
+                            new LineaDto { Id = p.lineaID, Linea = p.linea, Slug = p.slug_linea }
+                         }
+                         : new List<LineaDto>(),
+                ProductBrands = new List<MarcaProductoDto>
                     {
-                        Id = row.Id_Producto,
-                        Name = row.NombreProducto,
-                        Price = row.PVenta ?? 0,
-                        Description = row.Descripcion,
-                        OnSale = false,
-                        IsStock = true,
-                        Slug = row.SlugProducto.ToLower().Replace(" ", "-"),
-                        Sizes = new List<cSizeDTO>(),
-                        Images = new List<cImageDTO>()
-                    };
-                    linea.Products.Add(producto);
-                }
+                        new MarcaProductoDto
+                        {
+                            Id = p.Id_Marca,
+                            Marca = p.Marca,
+                            Slug = p.Slug_Marca
+                        }
+                    },
+                ProductosCaracteristicas = string.IsNullOrEmpty(p.ProductosCaracteristicas)
+                    ? new List<ProductosCaracteristicasDTO>()
+                    : JsonConvert.DeserializeObject<List<ProductosCaracteristicasDTO>>(p.ProductosCaracteristicas),
 
-                if (row.Id_Size.HasValue && !producto.Sizes.Any(s => s.Id == row.Id_Size))
-                {
-                    producto.Sizes.Add(new cSizeDTO
+                Colors = new List<string> { "#eb7b8b", "#000000", "#927764" }
+            }).ToList();
+
+            return productoDtos; 
+
+        }
+        public async Task<List<spProductoEcommerceDto>> GetProductsSP()
+        {
+
+            string baseUrl = "";
+
+
+
+            var resultadoPlano = await _context.Set<ProductoPlano>()
+            .FromSqlInterpolated($"EXEC spProductosEmpaqueGet")
+        .ToListAsync();
+
+
+
+            var productoDtos = resultadoPlano.Select(p => new spProductoEcommerceDto
+            {
+                ProductoEmpaqueId = p.ProductoEmpaqueId,
+                Name = p.NombreProductoCodigo,
+                Featured = p.Featured,
+                Price = p.Price,
+                SalePrice = p.SalePrice,
+                OnSale = p.OnSale,
+                Slug = p.Slug,
+                IsStock = p.IsStock,
+                RatingCount = p.RatingCount,
+                Description = p.Description,
+                ShortDescription = p.ShortDescription,
+                CategoriaTipo = p.CategoriaTipo,
+                CreatedAt = p.CreatedAt,
+                UpdatedAt = p.UpdatedAt,
+
+                // Aquí deserializas el JSON de Sizes en la propiedad Sizes
+                Sizes = string.IsNullOrEmpty(p.Sizes)
+                    ? new List<spEmpaqueDto>()
+                    : JsonConvert.DeserializeObject<List<spEmpaqueDto>>(p.Sizes),
+
+
+                Badges = new List<MarcaProductoDto>
                     {
-                        Id = row.Id_Size.Value,
-                        Codigo = row.Codigo_Empaque,
-                        PVenta = row.PVentaPE,
-                        PCompra = row.PCompraPE,
-                        Descuento = row.DescuentoPE,
-                        Activo = row.ActivoPE
-                    });
-                }
+                        new MarcaProductoDto
+                        {
+                            Id = p.Id_Marca,
+                            Marca = p.Marca,
+                            Slug = p.Slug_Marca
+                        }
+                    },
 
-                if (row.id_imagen.HasValue && !producto.Images.Any(i => i.Id == row.id_imagen))
-                {
-                    var imagen = new cImageDTO
+                Images = string.IsNullOrEmpty(p.ProductoImagenes)
+                    ? new List<spImageDto>()
+                    : JsonConvert.DeserializeObject<List<spImageDto>>(p.ProductoImagenes),
+
+                //Thumbnail = string.IsNullOrEmpty(p.thumbnail)
+                //    ? new spImagenProductoDto()                   
+                //    : JsonConvert.DeserializeObject<spImagenProductoDto>(p.thumbnail),
+
+                //ThumbnailBack = string.IsNullOrEmpty(p.thumbnailback)
+                //    ? new spImagenProductoDto()
+                //    : JsonConvert.DeserializeObject<spImagenProductoDto>(p.thumbnailback),
+
+
+                ProductCategories = p.lineaID != null ? new List<LineaDto> {
+                            new LineaDto { Id = p.lineaID, Linea = p.linea, Slug = p.slug_linea }
+                         }
+                         : new List<LineaDto>(),
+                ProductBrands = new List<MarcaProductoDto>
                     {
-                        Id = 0,
-                        Url = $"{baseUrl}/Assets/imagenes/products/Sayer-Generic.jpg",
-                        Name = $"img_{row.id_imagen}"
-                    };
+                        new MarcaProductoDto
+                        {
+                            Id = p.Id_Marca,
+                            Marca = p.Marca,
+                            Slug = p.Slug_Marca
+                        }
+                    },
+                ProductosCaracteristicas = string.IsNullOrEmpty(p.ProductosCaracteristicas)
+                    ? new List<ProductosCaracteristicasDTO>()
+                    : JsonConvert.DeserializeObject<List<ProductosCaracteristicasDTO>>(p.ProductosCaracteristicas),
 
-                    producto.Images.Add(imagen);
+                Colors = new List<string> { "#eb7b8b", "#000000", "#927764" }
+            }).ToList();
 
-                    if (row.EsImagenPrincipal == true && producto.Thumbnail == null)
-                        producto.Thumbnail = imagen;
-                }
-            }
-
-            return lineasDict.Values.ToList();
-
+            return productoDtos;
 
         }
         //ya aya que quitarlo
