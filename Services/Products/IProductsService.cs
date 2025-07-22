@@ -12,6 +12,7 @@ namespace Api_comerce.Services.Products
         Task<List<spProductoEcommerceDto>> GetProductsidSP(int categoryId=0, string slug="null");
         Task<List<spProductoEcommerceDto>> GetProductsSP();
 
+        Task<List<LineaDto>> GetProductosCategoriesSP(int categoryId = 0, string slug = "null");
         //end stored procedures
         Task<List<LineaDto>> GetProductosCategories(int categoryId=0, string slug="null");
 

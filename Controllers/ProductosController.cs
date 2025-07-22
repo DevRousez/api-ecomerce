@@ -61,7 +61,9 @@ namespace Api_comerce.Controllers
         [HttpGet("products-categories")]
         public async Task<ActionResult<IEnumerable<LineaDto>>> GetProductosCategories(int catedoriaID = 0, string slug = "null")
         {
-            var categories = await _productsService.GetProductosCategories(catedoriaID, slug);
+            //var categories = await _productsService.GetProductosCategories(catedoriaID, slug);
+            var categories = await _productsService.GetProductosCategoriesSP(catedoriaID, slug);
+            
             return Ok(categories);
         }
         [HttpGet("name_contains")]

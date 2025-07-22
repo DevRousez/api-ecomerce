@@ -73,7 +73,7 @@ namespace Api_comerce.Dtos
         public string Url { get; set; }
     }
 
-   
+
 
     [Keyless]
     public class ProductoPlano
@@ -81,20 +81,31 @@ namespace Api_comerce.Dtos
         public int ProductoEmpaqueId { get; set; }
 
         public string NombreProductoCodigo { get; set; }
+        public int productId { get; set; }
 
         public bool Featured { get; set; }
 
         public decimal Price { get; set; }
+        public decimal PCompra { get; set; }
+        public decimal Descuento { get; set; }
 
         public decimal SalePrice { get; set; }
 
         public bool OnSale { get; set; }
 
         public string Slug { get; set; }
+        public string Codigo { get; set; }
 
         public bool IsStock { get; set; }
+        public bool Activo { get; set; }
+
+        public int ProductoSatId { get; set; }
 
         public int RatingCount { get; set; }
+
+
+        public int ProductoIdAcumulador { get; set; }
+        public bool Acumulador { get; set; }
 
         public string Description { get; set; }
 
@@ -106,9 +117,11 @@ namespace Api_comerce.Dtos
 
         public DateTime UpdatedAt { get; set; }
 
+        public string Prefijo { get; set; }
+
         // Este campo debe ser deserializado manualmente si estás trayendo Sizes como JSON
-        public string Sizes { get; set; }      
-            public string ProductosCaracteristicas { get; set; }
+        public string Sizes { get; set; }
+        public string ProductosCaracteristicas { get; set; }
 
         public string ProductoImagenes { get; set; }
 
@@ -118,7 +131,7 @@ namespace Api_comerce.Dtos
         public int lineaID { get; set; }
         public string linea { get; set; }
         public string slug_linea { get; set; }
-     
+
         public DateTime fecha_creado_linea { get; set; }
 
         public string Slug_Marca { get; set; }
@@ -127,5 +140,15 @@ namespace Api_comerce.Dtos
 
         public string thumbnail { get; set; }
         public string thumbnailback { get; set; }
+
+
+        public int empaqueId { get; set; }
+        public string empaque { get; set; }
+        public float Contenido { get; set; }
+
+        public bool Sincronizado { get; set; }
+
+        public string CodigoEmpaque { get; set; }
     }
-}
+
+    }
