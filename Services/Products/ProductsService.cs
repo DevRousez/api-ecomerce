@@ -695,7 +695,74 @@ namespace Api_comerce.Services.Products
             return productoDtos;
 
         }
-        //ya aya que quitarlo
+
+
+
+        public async Task<List<LineaDto>> GetProductosCategoriesSP(int categoriaId = 0, string slug = "null")
+        {
+
+            var resultadoPlano = await _context.Set<ProductoPlano>()
+     .FromSqlInterpolated($"EXEC spProductosEmpaqueGet @productoEmpaqueid={categoriaId}, @categoria_like={slug}")
+     .ToListAsync();
+
+            var lineas = resultadoPlano
+                .GroupBy(r => new { r.lineaID, r.linea })
+                .Select(g => new LineaDto
+                {
+                    Id = g.Key.lineaID,
+                    Linea = g.Key.linea,
+                    Slug = g.FirstOrDefault()?.Slug ?? "no-slug",
+                    FechaCreado = g.FirstOrDefault()?.fecha_creado_linea ?? DateTime.Now,
+                    ProductoEmpaque = g.GroupBy(p => p.ProductoEmpaqueId).Select(peGroup => new ProductoEmpaqueDto
+                    {
+                        ProductoEmpaqueId = peGroup.Key,
+                        ProductoId = peGroup.First().productId,
+                        EmpaqueId = peGroup.First().ProductoEmpaqueId,
+                        Codigo = peGroup.First().Codigo ?? "NO DATO",
+                        PCompra = peGroup.First().PCompra ,
+                        PVenta = peGroup.First().Price ,
+                        Descuento = (float?)(peGroup.First().Descuento),
+                        Activo = peGroup.First().Activo,
+
+                        Producto = new ProductoDto
+                        {
+                            ProductId = peGroup.First().productId,
+                            ProductoSatId = peGroup.First().ProductoSatId,
+                            Prefijo = peGroup.First().Prefijo ?? "NO DATO",
+                            NombreProducto = peGroup.First().NombreProductoCodigo,
+                            Descripcion = peGroup.First().Description ?? "NO DATO",
+                            DescripcionBreve = peGroup.First().ShortDescription ?? "NO DATO",
+                            Slug = peGroup.First().Slug ?? "no-slug",
+                            Rating = peGroup.First().RatingCount,
+                            Acumulador = peGroup.First().Acumulador,
+                            ProductoIdAcumulador = peGroup.First().ProductoIdAcumulador,
+                            CategoriaTipo = peGroup.First().CategoriaTipo ?? "Default",
+                            ProductosCaracteristicas = new List<ProductosCaracteristicasDTO>() // Si no viene en el SP
+                        },
+
+                        Empaque = new EmpaqueDto
+                        {
+                            Id = peGroup.First().empaqueId,
+                            Empaque = peGroup.First().empaque ?? "NO DATO",
+                            Contenido = peGroup.First().Contenido,
+                            Sincronizado = peGroup.First().Sincronizado,
+                            CodigoEmpaque = peGroup.First().CodigoEmpaque ?? "NO DATO",
+                            Codigo = peGroup.First().CodigoEmpaque ?? "NO DATO"
+                        },
+
+                        ImagenProducto = string.IsNullOrEmpty(peGroup.First().ProductoImagenes)
+                    ? new List<ImageDto>()
+                    : JsonConvert.DeserializeObject<List<ImageDto>>(peGroup.First().ProductoImagenes)
+
+                    }).ToList()
+                })
+                .ToList();
+
+            return lineas;
+
+        }
+
+        //end estored procedure
         public async Task<List<ProductoEcommerceDto>> GetProductosNameContainsAsync(string? name_contains = null)
         {
             var baseUrl = "";
